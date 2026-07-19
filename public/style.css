@@ -1,0 +1,412 @@
+body {
+  background-color: #0C1A32;
+  color: white;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: #0C1A32;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+nav a:hover {
+  color: #4A9EFF;
+}
+
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+  background-color: #070F1E;
+}
+
+.hero h1 {
+  font-size: 42px;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 18px;
+  color: #CBD5E1;
+  max-width: 600px;
+  margin: 0 auto 30px auto;
+}
+
+.cta-btn {
+  background-color: #4A9EFF;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cta-btn:hover {
+  background-color: #3a8ae0;
+}
+
+.features {
+  padding: 80px 40px;
+  text-align: center;
+  background-color: #0C1A32;
+}
+
+.features h2 {
+  color: white;
+  font-size: 32px;
+  margin-bottom: 50px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background-color: #162B55;
+  padding: 30px 20px;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.feature-card h3 {
+  color: #4A9EFF;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.feature-card p {
+  color: #CBD5E1;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.pricing {
+  padding: 80px 40px;
+  text-align: center;
+  background-color: #070F1E;
+}
+
+.pricing h2 {
+  color: white;
+  font-size: 32px;
+  margin-bottom: 50px;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+.price-card {
+  background-color: #162B55;
+  padding: 40px 24px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+}
+
+.price-card.featured {
+  border: 2px solid #4A9EFF;
+  transform: scale(1.05);
+}
+
+.price-card h3 {
+  color: white;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.price-card .price {
+  color: #4A9EFF;
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.price-card ul {
+  list-style: none;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.price-card li {
+  color: #CBD5E1;
+  font-size: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid #1E3A6E;
+}
+
+.contact {
+  padding: 80px 40px;
+  text-align: center;
+  background-color: #0C1A32;
+}
+
+.contact h2 {
+  color: white;
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.contact p {
+  color: #CBD5E1;
+  margin-bottom: 40px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #1E3A6E;
+  background-color: #162B55;
+  color: white;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: #94A3B8;
+}
+
+.contact-form textarea {
+  resize: vertical;
+}footer {
+  padding: 30px 40px;
+  text-align: center;
+  background-color: #070F1E;
+  border-top: 1px solid #1E3A6E;
+}
+
+footer p {
+  color: #94A3B8;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.footer-note {
+  font-size: 12px;
+  max-width: 500px;
+  margin: 0 auto;
+}@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  nav ul {
+    gap: 20px;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .hero p {
+    font-size: 16px;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .price-card.featured {
+    transform: none;
+  }
+}.report-form {
+  background-color: #162B55;
+  max-width: 450px;
+  margin: 40px auto 0 auto;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.report-form h3 {
+  color: white;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.report-form input,
+.report-form select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  border: 1px solid #1E3A6E;
+  background-color: #0C1A32;
+  color: white;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.report-form button {
+  width: 100%;
+}
+
+.report-result {
+  max-width: 450px;
+  margin: 30px auto 0 auto;
+  text-align: left;
+}.report-card {
+  background-color: #162B55;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #1E3A6E;
+}
+
+.report-card h3 {
+  color: white;
+  margin-bottom: 12px;
+}
+
+.report-card .score {
+  font-size: 18px;
+  color: #CBD5E1;
+  margin-bottom: 16px;
+}
+
+.report-card .score span {
+  color: #4A9EFF;
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.report-card ul {
+  list-style: none;
+}
+
+.report-card li {
+  color: #CBD5E1;
+  font-size: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid #1E3A6E;
+}
+
+.report-card li strong {
+  color: white;
+}.admin-section {
+  padding: 40px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.admin-section h2 {
+  color: white;
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+.lead-card {
+  background-color: #162B55;
+  border: 1px solid #1E3A6E;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.lead-card h3 {
+  color: #4A9EFF;
+  margin-bottom: 10px;
+}
+
+.lead-card p {
+  color: #CBD5E1;
+  font-size: 14px;
+  padding: 4px 0;
+}
+
+.lead-card p strong {
+  color: white;
+}
+.status {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.status-new {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #F59E0B;
+}
+
+.status-done {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #10B981;
+}
+
+.lead-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.wa-btn {
+  background-color: #25D366;
+  color: #04091A;
+  font-weight: bold;
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.done-btn {
+  background-color: #1E3A6E;
+  color: #CBD5E1;
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}

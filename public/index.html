@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<title>PlotPassport — AI-Powered Plot Intelligence | India</title>
+<meta name="description" content="India's first AI-powered pre-construction plot intelligence system. Certified Plot Passport with soil, seismic, flood analysis and government data reports.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --n1:#04091A;--n2:#070F1E;--n3:#0C1A32;--n4:#112244;--n5:#162B55;--n6:#1E3A6E;
+  --ac:#4A9EFF;--ac2:#7BB8FF;--gold:#F0A500;--gold2:#FFB830;
+  --wh:#FFF;--g1:#E2E8F0;--g2:#CBD5E1;--g3:#94A3B8;--g4:#64748B;
+  --safe:#10B981;--sb:rgba(16,185,129,.12);
+  --warn:#F59E0B;--wb2:rgba(245,158,11,.12);
+  --dng:#EF4444;--db:rgba(239,68,68,.12);
+  --card:rgba(255,255,255,.04);--cb:rgba(255,255,255,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--n2);color:var(--wh);overflow-x:hidden;line-height:1.6}
+::selection{background:var(--ac);color:var(--wh)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--n1)}::-webkit-scrollbar-thumb{background:var(--ac);border-radius:3px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes ripple{0%{transform:scale(0);opacity:.5}100%{transform:scale(4);opacity:0}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(74,158,255,.15)}50%{box-shadow:0 0 40px rgba(74,158,255,.35)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes borderPulse{0%,100%{border-color:rgba(74,158,255,.25)}50%{border-color:rgba(74,158,255,.7)}}
+@keyframes countUp{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+
+.au{opacity:0;animation:fadeUp .7s ease forwards}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}.d4{animation-delay:.4s}.d5{animation-delay:.5s}
+.reveal{opacity:0;transform:translateY(24px);filter:blur(4px);transition:opacity .4s cubic-bezier(.22,.61,.36,1),transform .4s cubic-bezier(.22,.61,.36,1),filter .4s ease}
+.revL{opacity:0;transform:translateX(-24px);filter:blur(4px);transition:opacity .4s cubic-bezier(.22,.61,.36,1),transform .4s cubic-bezier(.22,.61,.36,1),filter .4s ease}
+.revR{opacity:0;transform:translateX(24px);filter:blur(4px);transition:opacity .4s cubic-bezier(.22,.61,.36,1),transform .4s cubic-bezier(.22,.61,.36,1),filter .4s ease}
+.reveal.vis,.revL.vis,.revR.vis{opacity:1;transform:none;filter:blur(0)}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:68px;padding:0 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(4,9,26,.96);backdrop-filter:blur(20px);border-bottom:1px solid rgba(74,158,255,.12);transition:height .3s cubic-bezier(.22,.61,.36,1),background .3s ease,box-shadow .3s ease}
+nav.sc{height:58px;background:rgba(4,9,26,.99);box-shadow:0 8px 32px rgba(0,0,0,.35)}
+.nlogo{display:flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .25s ease}
+.nlogo:hover{opacity:.85}
+.nli{width:38px;height:38px;background:var(--wh);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;transition:transform .3s cubic-bezier(.22,.61,.36,1);box-shadow:0 0 0 1px rgba(240,165,0,.35)}
+.nlogo:hover .nli{transform:scale(1.08) rotate(-4deg)}
+.nbrand{display:flex;flex-direction:column;line-height:1.1}
+.nco{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:2.5px;color:var(--ac);margin-bottom:2px}
+.nlt{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--wh)}.nlt span{color:var(--ac)}
+.nlinks{display:flex;gap:28px;list-style:none}.nlinks a{color:var(--g3);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s;position:relative;padding-bottom:2px}
+.nlinks a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1.5px;background:var(--ac);transition:width .3s}
+.nlinks a:hover{color:var(--wh)}.nlinks a:hover::after{width:100%}
+.ncta{background:linear-gradient(135deg,var(--ac),#2D7FD6);color:var(--wh);border:none;padding:9px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:transform .2s cubic-bezier(.22,.61,.36,1),box-shadow .25s ease;position:relative;overflow:hidden}
+.ncta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(74,158,255,.4)}
+.ncta:active{transform:translateY(0) scale(.97)}
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.ham span{display:block;width:24px;height:2px;background:var(--wh);border-radius:2px;transition:all .3s}
+.ham.op span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.ham.op span:nth-child(2){opacity:0}
+.ham.op span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mmenu{display:none;position:fixed;top:68px;left:0;right:0;background:rgba(4,9,26,.98);padding:24px;border-bottom:1px solid rgba(74,158,255,.12);z-index:999;backdrop-filter:blur(20px)}
+.mmenu.op{display:block}.mmenu ul{list-style:none;display:flex;flex-direction:column;gap:16px}
+.mmenu a{color:var(--g2);text-decoration:none;font-size:15px;font-weight:500;display:block;padding:4px 0}
+.mmcta{display:block;background:linear-gradient(135deg,var(--ac),#2D7FD6);color:var(--wh);border:none;padding:13px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;width:100%;margin-top:12px;text-align:center}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:120px 48px 80px;background:linear-gradient(180deg,var(--n1) 0%,var(--n2) 60%,var(--n3) 100%)}
+.hgrid{position:absolute;inset:0;background-image:linear-gradient(rgba(74,158,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(74,158,255,.05) 1px,transparent 1px);background-size:56px 56px;pointer-events:none;will-change:transform}
+.hgl1{position:absolute;top:-180px;left:-180px;width:560px;height:560px;background:radial-gradient(circle,rgba(74,158,255,.1) 0%,transparent 65%);pointer-events:none;will-change:transform}
+.hgl2{position:absolute;bottom:-180px;right:-180px;width:480px;height:480px;background:radial-gradient(circle,rgba(240,165,0,.07) 0%,transparent 65%);pointer-events:none;will-change:transform}
+.hc{position:relative;z-index:2;max-width:900px;text-align:center}
+.hbadge{display:inline-flex;align-items:center;gap:8px;background:rgba(74,158,255,.1);border:1px solid rgba(74,158,255,.3);color:var(--ac2);padding:7px 16px;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:32px}
+.pdot{width:6px;height:6px;border-radius:50%;background:var(--ac);animation:pulse 2s infinite}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(38px,5.5vw,76px);font-weight:900;line-height:1.08;margin-bottom:24px;background:linear-gradient(135deg,var(--wh) 0%,var(--g1) 40%,var(--ac2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hsub{font-size:clamp(15px,1.8vw,18px);color:var(--g3);line-height:1.8;max-width:640px;margin:0 auto 48px}
+.hbtns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:64px}
+.bprim{background:linear-gradient(135deg,var(--ac),#2D7FD6);color:var(--wh);border:none;padding:15px 32px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:transform .2s cubic-bezier(.22,.61,.36,1),box-shadow .3s ease;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(74,158,255,.3);display:inline-flex;align-items:center;gap:8px}
+.bprim:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(74,158,255,.5)}
+.bprim:active{transform:translateY(0) scale(.97)}
+.bsec{background:transparent;color:var(--g1);border:1.5px solid rgba(255,255,255,.18);padding:15px 32px;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all .25s;display:inline-flex;align-items:center;gap:8px}
+.bsec:hover{border-color:var(--ac);color:var(--ac);background:rgba(74,158,255,.07)}
+.rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.28);animation:ripple .55s linear;pointer-events:none}
+.hstats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:720px;margin:0 auto}
+.hst{text-align:center;padding:20px 14px;background:var(--card);border:1px solid var(--cb);border-radius:12px;transition:all .3s}
+.hst:hover{background:rgba(74,158,255,.07);border-color:rgba(74,158,255,.3);transform:translateY(-3px)}
+.hst .n{font-family:'Space Mono',monospace;font-size:28px;font-weight:700;color:var(--ac);line-height:1}
+.hst .l{font-size:11px;color:var(--g3);margin-top:6px;letter-spacing:.5px}
+
+/* SECTIONS */
+.sec{padding:96px 48px}.si{max-width:1140px;margin:0 auto}
+.ey{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ac);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.ey::before{content:'';display:inline-block;width:22px;height:2px;background:var(--ac)}
+.sh{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,48px);font-weight:700;line-height:1.18;margin-bottom:16px;color:var(--wh)}
+.ss{font-size:16px;line-height:1.8;color:var(--g3);max-width:540px;margin-bottom:56px}
+.altsec{background:var(--n3)}.darksec{background:linear-gradient(180deg,var(--n1),var(--n3))}
+
+/* FEATURES */
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.fc{background:var(--card);border:1px solid var(--cb);border-radius:16px;padding:30px;position:relative;overflow:hidden;transition:transform .3s cubic-bezier(.22,.61,.36,1),background .3s ease,border-color .3s ease,box-shadow .3s ease;cursor:default;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+.fc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ac),var(--gold));transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.fc:hover{transform:translateY(-6px);background:rgba(74,158,255,.05);border-color:rgba(74,158,255,.22);box-shadow:0 16px 44px rgba(0,0,0,.28)}
+.fc:hover::before{transform:scaleX(1)}
+.fiw{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;background:linear-gradient(135deg,rgba(74,158,255,.14),rgba(74,158,255,.04));border:1px solid rgba(74,158,255,.18);transition:all .3s}
+.fc:hover .fiw{transform:scale(1.08);background:linear-gradient(135deg,rgba(74,158,255,.22),rgba(74,158,255,.08))}
+.fn{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--wh);margin-bottom:10px}
+.fd{font-size:13.5px;color:var(--g3);line-height:1.75}
+.ftag{display:inline-block;margin-top:14px;font-size:10px;font-weight:700;color:var(--ac);background:rgba(74,158,255,.1);padding:3px 10px;border-radius:100px;font-family:'Space Mono',monospace;letter-spacing:.5px}
+
+/* AI SECTION */
+.aisec{background:var(--n4);position:relative;overflow:hidden}
+.aisec::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(74,158,255,.06) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+.aic{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.aiv{display:flex;align-items:center;justify-content:center}
+.aring{width:260px;height:260px;border-radius:50%;border:2px solid rgba(74,158,255,.18);display:flex;align-items:center;justify-content:center;position:relative;animation:glow 3.5s ease-in-out infinite}
+.aring::before{content:'';position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(74,158,255,.07)}
+.acore{width:150px;height:150px;border-radius:50%;background:linear-gradient(135deg,rgba(74,158,255,.18),rgba(240,165,0,.08));border:2px solid rgba(74,158,255,.28);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px}
+.aorb{position:absolute;width:38px;height:38px;border-radius:50%;background:var(--n4);border:1px solid rgba(74,158,255,.25);display:flex;align-items:center;justify-content:center;font-size:16px;animation:float 4s ease-in-out infinite}
+.aorb:nth-child(2){animation-delay:.4s}
+.aorb:nth-child(3){animation-delay:.9s}
+.aorb:nth-child(4){animation-delay:1.4s}
+.asteps{display:flex;flex-direction:column;gap:22px}
+.astep{display:flex;gap:16px;align-items:flex-start}
+.asn{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--ac),#2D7FD6);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--wh);flex-shrink:0}
+.asb h4{font-size:15px;font-weight:600;color:var(--wh);margin-bottom:5px}
+.asb p{font-size:13px;color:var(--g3);line-height:1.7}
+
+/* GOVT DATA */
+.ggrid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.gcard{background:var(--card);border:1px solid var(--cb);border-radius:14px;overflow:hidden}
+.gchead{background:linear-gradient(135deg,var(--n5),var(--n6));padding:18px 22px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.05)}
+.gchead h3{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:var(--wh)}
+.gchead small{font-size:10px;color:var(--g4);font-family:'Space Mono',monospace;display:block;margin-top:2px}
+.gtbl{width:100%;border-collapse:collapse}
+.gtbl th{background:rgba(74,158,255,.06);padding:9px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--g3);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.05)}
+.gtbl td{padding:10px 14px;font-size:13px;color:var(--g2);border-bottom:1px solid rgba(255,255,255,.04)}
+.gtbl tr:last-child td{border-bottom:none}
+.zb{padding:3px 9px;border-radius:100px;font-size:10px;font-weight:700;font-family:'Space Mono',monospace}
+.zl{background:var(--sb);color:var(--safe)}.zm{background:var(--wb2);color:var(--warn)}.zh{background:var(--db);color:var(--dng)}.zvh{background:rgba(239,68,68,.22);color:#FF7070}
+.dlcard{background:linear-gradient(135deg,var(--n5),var(--n4));border:1px solid rgba(74,158,255,.2);border-radius:16px;padding:32px;text-align:center;animation:borderPulse 3s ease-in-out infinite}
+.dlcard .dlic{width:68px;height:68px;margin:0 auto 18px;background:rgba(240,165,0,.1);border:2px solid rgba(240,165,0,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;animation:float 3.6s ease-in-out infinite}
+.dlcard h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--wh);margin-bottom:10px}
+.dlcard p{font-size:13.5px;color:var(--g3);line-height:1.75;margin-bottom:24px}
+.bdl{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--n1);border:none;padding:12px 26px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .25s;display:inline-flex;align-items:center;gap:8px}
+.bdl:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(240,165,0,.4)}
+
+/* HOW */
+.hrow{display:flex;gap:0;position:relative;max-width:880px;margin:0 auto}
+.hrow::before{content:'';position:absolute;top:44px;left:88px;right:88px;height:1px;background:linear-gradient(90deg,transparent,rgba(74,158,255,.25),transparent);z-index:0}
+.hstep{flex:1;text-align:center;padding:0 22px;position:relative;z-index:1}
+.hcirc{width:88px;height:88px;border-radius:50%;border:2px solid rgba(74,158,255,.28);background:var(--n3);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;transition:all .3s}
+.hcirc:hover{border-color:var(--ac);background:rgba(74,158,255,.1);transform:scale(1.05)}
+.hnum{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--ac)}
+.ht{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:var(--wh);margin-bottom:10px}
+.hd{font-size:13px;color:var(--g3);line-height:1.65}
+
+/* PAGE LOADER */
+#pageLoader{position:fixed;inset:0;z-index:9999;background:var(--n1);display:flex;align-items:center;justify-content:center;transition:opacity .5s ease,visibility .5s ease}
+#pageLoader.done{opacity:0;visibility:hidden;pointer-events:none}
+.plSpin{width:38px;height:38px;border:2.5px solid rgba(74,158,255,.15);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
+</style>
+</head>
+<body>
+<div id="pageLoader"><div class="plSpin"></div></div>
+
+<!-- NAV -->
+<nav id="nb">
+  <a href="#" class="nlogo">
+    <div class="nli"><img src="data:image/jpeg;base64,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" alt="ZWIC Construction logo" style="width:100%;height:100%;object-fit:cover;border-radius:8px"></div>
+    <span class="nbrand"><span class="nco">ZWIC</span><span class="nlt">Plot<span>Passport</span></span></span>
+  </a>
+  <ul class="nlinks">
+    <li><a href="#feats">Features</a></li>
+    <li><a href="#aisec">AI Technology</a></li>
+    <li><a href="#govt">Govt Data</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="ncta" onclick="gto('fsec')">Get Free Report</button>
+  <div class="ham" id="ham" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</nav>
+<div class="mmenu" id="mm">
+  <ul>
+    <li><a href="#feats" onclick="closeMenu()">Features</a></li>
+    <li><a href="#aisec" onclick="closeMenu()">AI Technology</a></li>
+    <li><a href="#govt" onclick="closeMenu()">Govt Data</a></li>
+    <li><a href="#pricing" onclick="closeMenu()">Pricing</a></li>
+    <li><a href="#contact" onclick="closeMenu()">Contact</a></li>
+  </ul>
+  <button class="mmcta" onclick="gto('fsec');closeMenu()">Get Free Report</button>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hgrid"></div><div class="hgl1"></div><div class="hgl2"></div>
+  <div class="hc">
+    <div class="hbadge au"><span class="pdot"></span>India's First AI-Powered Plot Intelligence</div>
+    <h1 class="au d1">Your Plot Had Secrets.<br>We <span style="background:linear-gradient(135deg,var(--ac),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Decoded</span> All of Them.</h1>
+    <p class="hsub au d2">PlotPassport generated a complete pre-construction intelligence report — soil risk, seismic zone, flood alert, foundation advice, material estimates, and a 100-point plot health score. Free. No login. Instant.</p>
+    <div class="hbtns au d3">
+      <button class="bprim" onclick="gto('fsec')" id="hcta">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Generate My Plot Passport
+      </button>
+      <button class="bsec" onclick="gto('aisec')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>How AI Was Used
+      </button>
+    </div>
+    <div class="hstats au d4">
+      <div class="hst"><div class="n" data-c="6">0</div><div class="l">Risk Analyses</div></div>
+      <div class="hst"><div class="n" data-c="700">0</div><div class="l">Districts Mapped</div></div>
+      <div class="hst"><div class="n" data-c="100">0</div><div class="l">Plot Health Score</div></div>
+      <div class="hst"><div class="n">IS</div><div class="l">Code Compliant</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="sec altsec" id="feats">
+  <div class="si">
+    <div class="ey reveal">What You Get — 100% Free</div>
+    <h2 class="sh reveal">Six Intelligence Layers.<br>One Plot Passport Report.</h2>
+    <p class="ss reveal">Every analysis is built on BIS standards, NDMA government records, and IS codes — not generic calculators or estimates.</p>
+    <div class="fgrid">
+      <div class="fc reveal d1">
+        <div class="fiw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+        <div class="fn">Soil & Foundation Analysis</div>
+        <p class="fd">The system analysed your soil type and bearing capacity, then recommended the exact foundation per IS 1904 — strip, raft, pile, or under-reamed — with precise depth specifications based on your district's geotechnical profile.</p>
+        <span class="ftag">IS 1904 Compliant</span>
+      </div>
+      <div class="fc reveal d2">
+        <div class="fiw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg></div>
+        <div class="fn">Disaster Zone Report</div>
+        <p class="fd">The AI cross-referenced your district with BIS IS 1893 seismic zones, NDMA flood risk classifications, and IMD cyclone vulnerability maps across 700+ Indian districts from official government records.</p>
+        <span class="ftag">BIS + NDMA Data</span>
+      </div>
+      <div class="fc reveal d3">
+        <div class="fiw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg></div>
+        <div class="fn">Orientation & Climate Advice</div>
+        <p class="fd">Sun path analysis was performed for your plot's facing direction, generating optimal room placement strategies that were projected to reduce electricity bills by 20–30% through natural ventilation and lighting.</p>
+        <span class="ftag">Climate Optimised</span>
+      </div>
+      <div class="fc reveal d1">
+        <div class="fiw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+        <div class="fn">Material & Waste Calculator</div>
+        <p class="fd">Cement, steel, bricks, sand, and aggregate quantities were calculated using IS code thumb rules, with 5–12% waste estimates included to prevent costly over-ordering and material spoilage on-site.</p>
+        <span class="ftag">IS Code Formula</span>
+      </div>
+      <div class="fc reveal d2">
+        <div class="fiw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg></div>
+        <div class="fn">Waterproofing Risk Alert</div>
+        <p class="fd">Water table depth, soil permeability, and proximity to water bodies were analysed to generate IS 3370 compliant waterproofing recommendations with specific product guidance and priority risk classification.</p>
+        <span class="ftag">IS 3370 Standard</span>
+      </div>
+      <div class="fc reveal d3">
+        <div class="fiw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <div class="fn">Plot Passport Report</div>
+        <p class="fd">All six analyses were compiled into a 100-point Plot Health Score and issued as a printable Plot Passport report with a unique Report ID and shareable PDF format.</p>
+        <span class="ftag">Printable Report</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI SECTION -->
+<section class="sec aisec" id="aisec">
+  <div class="si">
+    <div class="ey reveal">Artificial Intelligence</div>
+    <h2 class="sh reveal">How AI Was Deployed<br>in PlotPassport</h2>
+    <div class="aic">
+      <div class="aiv revL">
+        <div class="aring">
+          <div class="acore">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/><circle cx="7.5" cy="14.5" r="1.5"/><circle cx="16.5" cy="14.5" r="1.5"/></svg>
+            <span style="font-size:10px;color:var(--ac2);font-family:'Space Mono',monospace;letter-spacing:1px">AI ENGINE</span>
+          </div>
+          <div class="aorb" style="top:12px;right:22px">🔬</div>
+          <div class="aorb" style="bottom:22px;left:12px">🌍</div>
+          <div class="aorb" style="bottom:32px;right:12px">📊</div>
+          <div class="aorb" style="top:32px;left:12px">💧</div>
+        </div>
+      </div>
+      <div class="asteps revR">
+        <div class="astep reveal">
+          <div class="asn">01</div>
+          <div class="asb"><h4>Data Collection & Pattern Recognition</h4><p>The AI was trained on civil engineering IS codes, BIS seismic classifications, and NDMA district flood records. It learnt to recognise patterns between soil types, seismic zones, and optimal foundation strategies across 700+ Indian districts.</p></div>
+        </div>
+        <div class="astep reveal">
+          <div class="asn">02</div>
+          <div class="asb"><h4>Multi-Variable Risk Scoring</h4><p>The AI engine simultaneously processed seismic risk, flood classification, soil bearing capacity, water table depth, and topography. Each variable was weighted according to IS code severity tables to compute the 100-point Plot Health Score.</p></div>
+        </div>
+        <div class="astep reveal">
+          <div class="asn">03</div>
+          <div class="asb"><h4>Actionable Report Generation</h4><p>The AI synthesised all computed data into readable civil engineering advice — referencing specific IS codes, recommending named products, and generating contractor-ready instructions tailored to each plot's unique combination of risk factors.</p></div>
+        </div>
+        <div class="astep reveal">
+          <div class="asn">04</div>
+          <div class="asb"><h4>Report Compilation</h4><p>All analyses were compiled into a Plot Passport report referencing published BIS and government agency data, useful as background reading for discussions with your architect, contractor, or lender — though it is not an official or government-issued document.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GOVT DATA -->
+<section class="sec altsec" id="govt">
+  <div class="si">
+    <div class="ey reveal">Built On Public Government Data</div>
+    <h2 class="sh reveal">Data Sources That Powered<br>Your Report</h2>
+    <p class="ss reveal">Every risk classification in your Plot Passport was sourced directly from official Indian government publications, BIS standards, and NDMA district-level records.</p>
+    <div class="ggrid">
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div class="gcard reveal">
+          <div class="gchead"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg><div><h3>BIS Seismic Zone Classification</h3><small>IS 1893 : 2016 — Bureau of Indian Standards</small></div></div>
+          <table class="gtbl"><thead><tr><th>Zone</th><th>Risk Level</th><th>Cities</th><th>IS Code</th></tr></thead><tbody>
+            <tr><td>Zone II</td><td><span class="zb zl">LOW</span></td><td>Bengaluru, Hyderabad</td><td>IS 1893</td></tr>
+            <tr><td>Zone III</td><td><span class="zb zm">MODERATE</span></td><td>Mumbai, Chennai, Kolkata</td><td>IS 1893</td></tr>
+            <tr><td>Zone IV</td><td><span class="zb zh">HIGH</span></td><td>Delhi, Chandigarh, Patna</td><td>IS 1893</td></tr>
+            <tr><td>Zone V</td><td><span class="zb zvh">VERY HIGH</span></td><td>Guwahati, Srinagar</td><td>IS 1893</td></tr>
+          </tbody></table>
+        </div>
+        <div class="gcard reveal">
+          <div class="gchead"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg><div><h3>NDMA Flood Risk Districts</h3><small>National Disaster Management Authority — 2023</small></div></div>
+          <table class="gtbl"><thead><tr><th>Risk Level</th><th>States Affected</th><th>Plinth Required</th></tr></thead><tbody>
+            <tr><td><span class="zb zl">LOW</span></td><td>Rajasthan, MP</td><td>300mm above road</td></tr>
+            <tr><td><span class="zb zm">MODERATE</span></td><td>UP, Karnataka</td><td>450mm above road</td></tr>
+            <tr><td><span class="zb zh">HIGH</span></td><td>Bihar, Kerala, W. Bengal</td><td>600–900mm + waterproof beam</td></tr>
+            <tr><td><span class="zb zvh">VERY HIGH</span></td><td>Assam, coastal Odisha</td><td>Flood-resistant design mandatory</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div class="gcard reveal">
+          <div class="gchead"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div><h3>Soil Classification Standards</h3><small>IS 1498 : 1970 & IS 1888 : 1982</small></div></div>
+          <table class="gtbl"><thead><tr><th>Soil Type</th><th>SBC Range</th><th>Foundation</th></tr></thead><tbody>
+            <tr><td>Rock / Hard Murrum</td><td>250–350 kN/m²</td><td>Shallow isolated footing</td></tr>
+            <tr><td>Loamy / Mixed</td><td>150–200 kN/m²</td><td>Strip or column footing</td></tr>
+            <tr><td>Alluvial / Clay</td><td>80–130 kN/m²</td><td>RCC raft foundation</td></tr>
+            <tr><td>Sandy Loose</td><td>80–120 kN/m²</td><td>Compacted raft</td></tr>
+            <tr><td>Black Cotton</td><td>50–80 kN/m²</td><td>Under-reamed pile (IS 11446)</td></tr>
+          </tbody></table>
+        </div>
+        <div class="dlcard reveal">
+          <div class="dlic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><circle cx="12" cy="15" r="2"/></svg></div>
+          <h3>Downloadable Reference<br>Data Summary</h3>
+          <p>A printable summary of the published BIS and public agency reference tables used in your plot analysis — handy background reading to share with your architect or contractor. It is not an official or government-issued document.</p>
+          <button class="bdl" onclick="downloadGovtCert()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Reference Data Summary
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="sec darksec" id="how">
+  <div class="si">
+    <div class="ey reveal" style="justify-content:center">Process</div>
+    <h2 class="sh reveal" style="text-align:center">Three Steps Generated<br>Your Complete Report</h2>
+    <p class="ss reveal" style="text-align:center;margin:0 auto 60px">The entire process was completed in under 30 seconds — no signup, no payment, no technical knowledge required.</p>
+    <div class="hrow">
+      <div class="hstep reveal d1"><div class="hcirc"><span class="hnum">01</span></div><div class="ht">Details Were Entered</div><p class="hd">Location, plot area, soil type, water table depth, and construction type were submitted through a structured 3-step intelligent form.</p></div>
+      <div class="hstep reveal d2"><div class="hcirc"><span class="hnum">02</span></div><div class="ht">Analysis Was Run</div><p class="hd">The system cross-referenced submitted data against government disaster maps, IS code databases, and soil classification standards simultaneously.</p></div>
+      <div class="hstep reveal d3"><div class="hcirc"><span class="hnum">03</span></div><div class="ht">Passport Was Issued</div><p class="hd">A Plot Passport report with a unique Report ID was produced — printable and shareable, useful as background reading for your architect or contractor.</p></div>
+    </div>
+  </div>
+</section>
+<style>
+/* FORM */
+.fwrap{max-width:800px;margin:0 auto;background:var(--n3);border:1px solid rgba(74,158,255,.14);border-radius:20px;overflow:hidden;box-shadow:0 24px 72px rgba(0,0,0,.4)}
+.ftop{background:linear-gradient(135deg,var(--n4),var(--n5));padding:26px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(74,158,255,.12)}
+.ftit{font-family:'Playfair Display',serif;font-size:21px;color:var(--wh);font-weight:700}.ftit span{color:var(--ac)}
+.pdots{display:flex;gap:8px}.pd{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .3s}
+.pd.act{background:var(--ac);box-shadow:0 0 8px var(--ac)}.pd.dn{background:rgba(74,158,255,.45)}
+.fst{padding:38px;display:none}.fst.active{display:block}
+.fsth{font-family:'Playfair Display',serif;font-size:21px;font-weight:600;color:var(--wh);margin-bottom:6px}
+.fstsb{font-size:13px;color:var(--g3);margin-bottom:28px;line-height:1.6}
+.fgr{display:grid;grid-template-columns:1fr 1fr;gap:17px}
+.fg{display:flex;flex-direction:column;gap:6px}.fg.full{grid-column:span 2}
+.fg label{font-size:12px;font-weight:600;color:var(--g2);letter-spacing:.3px}
+.fg label .req{color:var(--dng)}
+.fg input,.fg select,.fg textarea{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.09);border-radius:10px;padding:11px 13px;font-size:14px;font-family:'Inter',sans-serif;color:var(--wh);outline:none;transition:all .25s;-webkit-appearance:none}
+.fg select option{background:var(--n4);color:var(--wh)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--ac);background:rgba(74,158,255,.05);box-shadow:0 0 0 3px rgba(74,158,255,.1)}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--g4)}
+.fg textarea{min-height:78px;resize:vertical}
+.ctypes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ctype{background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.08);border-radius:11px;padding:13px;cursor:pointer;display:flex;align-items:flex-start;gap:11px;transition:all .25s}
+.ctype:hover{border-color:rgba(74,158,255,.28);background:rgba(74,158,255,.04)}
+.ctype.sel{border-color:var(--ac);background:rgba(74,158,255,.09);box-shadow:0 0 0 3px rgba(74,158,255,.1)}
+.ctype input{display:none}.cicon{font-size:20px;flex-shrink:0;margin-top:1px}
+.cname{font-size:13px;font-weight:600;color:var(--wh)}.csub{font-size:11px;color:var(--g3);margin-top:2px}
+.fnav{display:flex;justify-content:space-between;align-items:center;margin-top:30px;padding-top:22px;border-top:1px solid rgba(255,255,255,.06)}
+.bbk{background:transparent;color:var(--g3);border:1.5px solid rgba(255,255,255,.09);padding:11px 22px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.bbk:hover{border-color:rgba(255,255,255,.22);color:var(--wh)}
+.bnxt{background:linear-gradient(135deg,var(--ac),#2D7FD6);color:var(--wh);border:none;padding:11px 26px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px}
+.bnxt:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(74,158,255,.4)}
+.bgen{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--n1);border:none;padding:11px 26px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px}
+.bgen:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(240,165,0,.45)}
+.bgen:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+/* LOADING */
+.lds{display:none;text-align:center;padding:56px 40px}.lds.act{display:block}
+.ldring{width:56px;height:56px;border:4px solid rgba(74,158,255,.14);border-top-color:var(--ac);border-radius:50%;animation:spin .85s linear infinite;margin:0 auto 22px}
+.ldh{font-family:'Playfair Display',serif;font-size:21px;color:var(--wh);margin-bottom:6px}
+.ldsb{font-size:13px;color:var(--g3);margin-bottom:28px}
+.ldsteps{display:flex;flex-direction:column;gap:9px;text-align:left;max-width:420px;margin:0 auto}
+.ldstep{display:flex;align-items:center;gap:11px;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:9px;font-size:13px;color:var(--g3);opacity:.32;transition:all .4s}
+.ldstep.act{opacity:1;color:var(--wh);border-color:rgba(74,158,255,.18);background:rgba(74,158,255,.05)}
+.ldstep.done{opacity:1;color:var(--safe);border-color:rgba(16,185,129,.18);background:rgba(16,185,129,.04)}
+
+/* CERTIFICATE */
+#CRPT{display:none;padding:38px}#CRPT.act{display:block}
+.certwrap{background:var(--n3);border:2px solid rgba(74,158,255,.18);border-radius:16px;overflow:hidden;box-shadow:0 24px 72px rgba(0,0,0,.5);position:relative}
+.cwm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-family:'Playfair Display',serif;font-size:76px;font-weight:900;color:rgba(74,158,255,.025);pointer-events:none;white-space:nowrap;z-index:0;letter-spacing:8px}
+.chead{background:linear-gradient(135deg,var(--n1),var(--n5));padding:26px 38px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;border-bottom:1px solid rgba(74,158,255,.12)}
+.cbw{display:flex;align-items:center;gap:14px}
+.cseal{width:50px;height:50px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(240,165,0,.08)}
+.cbrt .ctitle{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--wh)}
+.cbrt .csub2{font-size:10px;color:var(--g3);font-family:'Space Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.cidw{text-align:right;font-family:'Space Mono',monospace}
+.cidw .clbl{font-size:10px;color:var(--g4);letter-spacing:1px;text-transform:uppercase}
+.cidw .cid{font-size:16px;font-weight:700;color:var(--gold);margin-top:2px}
+.cidw .cdate{font-size:11px;color:var(--g3);margin-top:3px}
+.cscrow{background:rgba(0,0,0,.18);padding:22px 38px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;position:relative;z-index:1;border-bottom:1px solid rgba(255,255,255,.04)}
+.sgauge{display:flex;align-items:center;gap:16px}
+.gring{width:84px;height:84px;border-radius:50%;border:3px solid currentColor;display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:'Space Mono',monospace;flex-shrink:0}
+.gring .gn{font-size:26px;font-weight:700;line-height:1}.gring .go{font-size:10px;opacity:.65}
+.grs{color:var(--safe);background:var(--sb)}.grw{color:var(--warn);background:var(--wb2)}.grd{color:var(--dng);background:var(--db)}
+.sinfo h3{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:var(--wh)}.sinfo p{font-size:13px;color:var(--g3);margin-top:3px}
+.cmeta{display:flex;gap:20px;flex-wrap:wrap}.cmi{font-size:12px;color:var(--g3)}.cmi strong{display:block;font-size:14px;color:var(--wh);font-weight:600;margin-bottom:1px}
+.cbody{padding:28px 38px;position:relative;z-index:1}
+.rsects{display:flex;flex-direction:column;gap:18px}
+.rcard{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:11px;overflow:hidden;transition:all .3s}
+.rcard:hover{border-color:rgba(74,158,255,.18);box-shadow:0 4px 18px rgba(0,0,0,.18)}
+.rchead{background:rgba(255,255,255,.03);padding:13px 18px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,.05)}
+.rctitle{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--wh);flex:1}
+.rbadge{padding:3px 10px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;font-family:'Space Mono',monospace}
+.rbs{background:var(--sb);color:var(--safe)}.rbw{background:var(--wb2);color:var(--warn)}.rbd{background:var(--db);color:var(--dng)}
+.rcbody{padding:18px}
+.rcbody p{font-size:13px;color:var(--g2);line-height:1.75;margin-bottom:10px}
+.rcbody ul{display:flex;flex-direction:column;gap:5px;list-style:none}
+.rcbody ul li{font-size:13px;color:var(--g2);line-height:1.6;display:flex;gap:9px;align-items:flex-start}
+.rcbody ul li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0;margin-top:7px}
+.matgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:6px}
+.matbox{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:9px;padding:11px;text-align:center;transition:all .25s}
+.matbox:hover{background:rgba(74,158,255,.07);border-color:rgba(74,158,255,.18)}
+.matv{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--wh)}
+.matl{font-size:11px;color:var(--g3);margin-top:2px}.matw{font-size:10px;color:var(--dng);margin-top:1px}
+.cacts{display:flex;gap:11px;margin-top:24px;flex-wrap:wrap}
+.bpr{background:linear-gradient(135deg,var(--n5),var(--n6));color:var(--wh);border:1px solid rgba(74,158,255,.18);padding:11px 22px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;display:flex;align-items:center;gap:7px}
+.bpr:hover{border-color:var(--ac);background:rgba(74,158,255,.1)}
+.bwa{background:#25D366;color:var(--wh);border:none;padding:11px 22px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;display:flex;align-items:center;gap:7px}
+.bwa:hover{background:#1da851;transform:translateY(-1px)}
+.brst{background:transparent;color:var(--g3);border:1.5px solid rgba(255,255,255,.09);padding:11px 22px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.brst:hover{border-color:rgba(255,255,255,.22);color:var(--wh)}
+.cfoot{background:rgba(0,0,0,.18);padding:16px 38px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.05);flex-wrap:wrap;gap:10px}
+.cfoot p{font-size:10px;color:var(--g4);font-family:'Space Mono',monospace;line-height:1.65}
+.ostamp{width:58px;height:58px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.7;transform:rotate(-12deg)}
+</style>
+
+<!-- FORM SECTION -->
+<section class="sec altsec" id="fsec">
+  <div class="si">
+    <div class="ey reveal">Generate Report</div>
+    <h2 class="sh reveal">Get Your Free Plot Passport</h2>
+    <p class="ss reveal">Completely free. No login required. Results were generated in seconds using AI-powered analysis and government data.</p>
+    <div class="fwrap reveal">
+      <div class="ftop">
+        <div class="ftit">Plot <span>Intelligence</span> Form</div>
+        <div class="pdots"><div class="pd act" id="pd1"></div><div class="pd" id="pd2"></div><div class="pd" id="pd3"></div></div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="fst active" id="fs1">
+        <h3 class="fsth">Location & Plot Basics</h3>
+        <p class="fstsb">Your district was used to load seismic zone and flood risk classifications from published government reference tables.</p>
+        <div class="fgr">
+          <div class="fg"><label>Owner / Applicant Name <span class="req">*</span></label><input type="text" id="vn" placeholder="e.g. Ramesh Patel"></div>
+          <div class="fg"><label>Mobile Number</label><input type="tel" id="vp" placeholder="e.g. 9876543210" maxlength="10" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)"></div>
+          <div class="fg"><label>State <span class="req">*</span></label>
+            <select id="vs"><option value="">Select State</option><option>Andhra Pradesh</option><option>Assam</option><option>Bihar</option><option>Chhattisgarh</option><option>Delhi</option><option>Goa</option><option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option><option>Jammu &amp; Kashmir</option><option>Jharkhand</option><option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option><option>Maharashtra</option><option>Manipur</option><option>Meghalaya</option><option>Odisha</option><option>Punjab</option><option>Rajasthan</option><option>Tamil Nadu</option><option>Telangana</option><option>Uttar Pradesh</option><option>Uttarakhand</option><option>West Bengal</option><option>Other</option></select>
+          </div>
+          <div class="fg"><label>District / City <span class="req">*</span></label><input type="text" id="vd" placeholder="e.g. Pune, Jaipur, Kochi"></div>
+          <div class="fg"><label>Plot Area (sq ft) <span class="req">*</span></label><input type="number" id="va" placeholder="e.g. 1500" min="100"></div>
+          <div class="fg"><label>Floors Planned</label><select id="vf"><option value="G">Ground Floor Only</option><option value="G1">G+1 (2 Floors)</option><option value="G2">G+2 (3 Floors)</option><option value="G3">G+3 or More</option></select></div>
+        </div>
+        <div class="fnav"><div></div><button class="bnxt" onclick="goSt(2)">Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="fst" id="fs2">
+        <h3 class="fsth">Soil & Ground Conditions</h3>
+        <p class="fstsb">These details were used to determine the correct foundation type per IS 1904 and assess waterproofing risk.</p>
+        <div class="fgr">
+          <div class="fg"><label>Soil Type <span class="req">*</span></label>
+            <select id="vso"><option value="">Select Soil Type</option><option value="bcs">Black Cotton Soil (Expansive)</option><option value="rls">Red Laterite Soil</option><option value="sandy">Sandy / Loose Soil</option><option value="clay">Clayey Soil</option><option value="loam">Loamy / Mixed Soil</option><option value="rock">Rock / Hard Murrum</option><option value="alluvial">Alluvial / River Deposit</option><option value="idk">I Don't Know</option></select>
+          </div>
+          <div class="fg"><label>Safe Bearing Capacity (kN/m²)</label><input type="number" id="vsbc" placeholder="e.g. 150 — blank if unknown"></div>
+          <div class="fg"><label>Water Table Depth (ft below ground)</label><input type="number" id="vwt" placeholder="e.g. 20"></div>
+          <div class="fg"><label>Plot Topography</label><select id="vtopo"><option value="flat">Flat / Level Ground</option><option value="slope">Slightly Sloped</option><option value="steep">Steep Slope</option><option value="low">Low-Lying / Depression</option></select></div>
+          <div class="fg full"><label>Construction Type <span class="req">*</span></label>
+            <div class="ctypes">
+              <label class="ctype" onclick="pCT(this,'res')"><input type="radio" name="ct"><div class="cicon">🏠</div><div><div class="cname">Residential</div><div class="csub">House / Villa / Flat</div></div></label>
+              <label class="ctype" onclick="pCT(this,'com')"><input type="radio" name="ct"><div class="cicon">🏢</div><div><div class="cname">Commercial</div><div class="csub">Shop / Office / Building</div></div></label>
+              <label class="ctype" onclick="pCT(this,'ind')"><input type="radio" name="ct"><div class="cicon">🏭</div><div><div class="cname">Industrial</div><div class="csub">Factory / Warehouse</div></div></label>
+              <label class="ctype" onclick="pCT(this,'mix')"><input type="radio" name="ct"><div class="cicon">🏘️</div><div><div class="cname">Mixed Use</div><div class="csub">Residential + Commercial</div></div></label>
+            </div>
+          </div>
+        </div>
+        <div class="fnav"><button class="bbk" onclick="goSt(1)">← Back</button><button class="bnxt" onclick="goSt(3)">Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="fst" id="fs3">
+        <h3 class="fsth">Orientation & Final Details</h3>
+        <p class="fstsb">These details were used to generate sun path analysis, wind direction advice, and waterproofing guidance.</p>
+        <div class="fgr">
+          <div class="fg"><label>Plot Facing Direction</label><select id="vface"><option value="N">North Facing</option><option value="S">South Facing</option><option value="E">East Facing</option><option value="W">West Facing</option><option value="NE">North-East Corner</option><option value="NW">North-West Corner</option><option value="SE">South-East Corner</option><option value="NA">Not Sure</option></select></div>
+          <div class="fg"><label>Nearby Water Bodies</label><select id="vwb"><option value="none">None / Far Away</option><option value="river">River (within 1 km)</option><option value="pond">Pond / Lake Nearby</option><option value="nala">Nala / Drain Nearby</option><option value="sea">Sea / Coastal</option></select></div>
+          <div class="fg"><label>Budget Range</label><select id="vbg"><option>Under ₹10 Lakhs</option><option>₹10 – ₹25 Lakhs</option><option>₹25 – ₹50 Lakhs</option><option>₹50 Lakhs – ₹1 Crore</option><option>Above ₹1 Crore</option></select></div>
+          <div class="fg"><label>WhatsApp (for sharing report)</label><input type="tel" id="vwa" placeholder="10-digit number (optional)" maxlength="10" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)"></div>
+          <div class="fg full"><label>Additional Concerns (optional)</label><textarea id="vnotes" placeholder="e.g. Area flooded during monsoon, near railway line, soil test showed poor results..."></textarea></div>
+        </div>
+        <div class="fnav"><button class="bbk" onclick="goSt(2)">← Back</button><button class="bgen" id="genBtn" onclick="generate()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Generate Plot Passport</button></div>
+      </div>
+
+      <!-- LOADING -->
+      <div class="lds" id="ldEl">
+        <div class="ldring"></div>
+        <div class="ldh">Analysing Your Plot…</div>
+        <div class="ldsb">Cross-referencing IS codes and government reference tables</div>
+        <div class="ldsteps">
+          <div class="ldstep" id="l1">📍 District seismic and flood zone data was being loaded…</div>
+          <div class="ldstep" id="l2">🔬 Foundation type was being determined from soil data…</div>
+          <div class="ldstep" id="l3">☀️ Sun path and orientation analysis was being computed…</div>
+          <div class="ldstep" id="l4">♻️ Material quantities and waste factors were being calculated…</div>
+          <div class="ldstep" id="l5">💧 Waterproofing risk level was being assessed…</div>
+          <div class="ldstep" id="l6">📄 Your Plot Passport report was being compiled…</div>
+        </div>
+      </div>
+
+      <!-- CERTIFICATE -->
+      <div id="CRPT">
+        <div class="certwrap">
+          <div class="cwm">PLOT PASSPORT</div>
+          <div class="chead">
+            <div class="cbw">
+              <div class="cseal"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+              <div class="cbrt"><div class="ctitle">PlotPassport</div><div class="csub2">Pre-Construction Intelligence Report · India</div></div>
+            </div>
+            <div class="cidw"><div class="clbl">Report ID</div><div class="cid" id="rId">PP-000000</div><div class="cdate" id="rDate"></div></div>
+          </div>
+          <div class="cscrow">
+            <div class="sgauge">
+              <div class="gring" id="sRing"><span class="gn" id="sNum">--</span><span class="go">/100</span></div>
+              <div class="sinfo"><h3 id="sLbl">Plot Health</h3><p id="sDesc">Analysing…</p></div>
+            </div>
+            <div class="cmeta">
+              <div class="cmi"><strong id="mName">—</strong>Owner</div>
+              <div class="cmi"><strong id="mLoc">—</strong>Location</div>
+              <div class="cmi"><strong id="mArea">—</strong>Plot Area</div>
+              <div class="cmi"><strong id="mType">—</strong>Construction</div>
+            </div>
+          </div>
+          <div class="cbody">
+            <div class="rsects" id="rCards"></div>
+            <div class="cacts">
+              <button class="bpr" onclick="window.print()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print / Save PDF</button>
+              <button class="bpr" id="dlPdfBtn" onclick="downloadReportPDF()" style="display:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download PDF</button>
+              <button class="bwa" onclick="shareWA()"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.125.554 4.122 1.524 5.855L.057 24l6.305-1.654A11.954 11.954 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.007-1.371l-.359-.214-3.741.981.998-3.648-.234-.374A9.818 9.818 0 1 1 12 21.818z"/></svg>Share WhatsApp</button>
+              <button class="brst" onclick="resetAll()">+ Analyse Another Plot</button>
+            </div>
+          </div>
+          <div class="cfoot">
+            <p>Generated by PlotPassport · <span id="footDate"></span><br>This is an advisory reference summary, not a government-issued document, and not a substitute for licensed soil investigation or structural engineering certification.<br>Data sources: BIS IS 1893, published district reference tables, IS 1904, IS 3370, IS 13920 | Contact: santhoshtm1923@gmail.com | +91 9789 798 101</p>
+            <div class="ostamp">
+              <svg width="58" height="58" viewBox="0 0 200 200">
+                <defs>
+                  <path id="sealTopArc" d="M 30,100 A 70,70 0 1,1 170,100" fill="none"/>
+                  <path id="sealBotArc" d="M 170,100 A 70,70 0 1,1 30,100" fill="none"/>
+                </defs>
+                <circle cx="100" cy="100" r="92" fill="none" stroke="var(--gold)" stroke-width="3"/>
+                <circle cx="100" cy="100" r="78" fill="none" stroke="var(--gold)" stroke-width="1.5"/>
+                <circle cx="100" cy="100" r="54" fill="none" stroke="var(--gold)" stroke-width="1.5"/>
+                <text font-family="'Space Mono',monospace" font-size="15" font-weight="700" letter-spacing="3" fill="var(--gold)">
+                  <textPath href="#sealTopArc" startOffset="50%" text-anchor="middle">PLOTPASSPORT</textPath>
+                </text>
+                <text font-family="'Space Mono',monospace" font-size="13" font-weight="700" letter-spacing="4" fill="var(--gold)">
+                  <textPath href="#sealBotArc" startOffset="50%" text-anchor="middle">SANTHOSH</textPath>
+                </text>
+                <text x="100" y="96" text-anchor="middle" font-family="'Inter',sans-serif" font-size="17" font-weight="800" fill="var(--gold)" letter-spacing="1">FOR</text>
+                <text x="100" y="118" text-anchor="middle" font-family="'Inter',sans-serif" font-size="17" font-weight="800" fill="var(--gold)" letter-spacing="1">REVIEW</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+/* SUBSCRIPTION */
+.subgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.scard{background:var(--card);border:1px solid var(--cb);border-radius:18px;padding:34px;position:relative;transition:all .35s;text-align:center}
+.scard.pop{background:linear-gradient(180deg,rgba(74,158,255,.1),rgba(74,158,255,.04));border-color:rgba(74,158,255,.38);transform:translateY(-8px);box-shadow:0 16px 44px rgba(74,158,255,.14)}
+.scard:hover{transform:translateY(-6px);box-shadow:0 16px 44px rgba(0,0,0,.28)}.scard.pop:hover{transform:translateY(-12px)}
+.pbadge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--ac),#2D7FD6);color:var(--wh);font-size:11px;font-weight:700;padding:4px 14px;border-radius:100px;white-space:nowrap;font-family:'Space Mono',monospace}
+.sico{width:60px;height:60px;border-radius:14px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center}
+.sprice{font-family:'Space Mono',monospace;font-size:36px;font-weight:700;color:var(--wh);margin-bottom:4px}.sprice span{font-size:14px;color:var(--g3);font-weight:400}
+.sname{font-family:'Playfair Display',serif;font-size:19px;font-weight:600;color:var(--wh);margin-bottom:8px}
+.sdesc{font-size:13px;color:var(--g3);margin-bottom:22px;line-height:1.65}
+.slist{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:26px;text-align:left}
+.slist li{font-size:13px;color:var(--g2);display:flex;gap:9px;align-items:flex-start}
+.slist li svg{flex-shrink:0;margin-top:2px}
+.bsub{width:100%;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .25s;border:none}
+.bso{background:transparent;border:1.5px solid rgba(255,255,255,.14);color:var(--wh)}.bso:hover{border-color:var(--ac);color:var(--ac);background:rgba(74,158,255,.07)}
+.bsf{background:linear-gradient(135deg,var(--ac),#2D7FD6);color:var(--wh);box-shadow:0 4px 18px rgba(74,158,255,.28)}.bsf:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(74,158,255,.45)}
+.bsg{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--n1);box-shadow:0 4px 18px rgba(240,165,0,.28)}.bsg:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(240,165,0,.4)}
+
+/* CONTACT */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.cinfo{display:flex;flex-direction:column;gap:20px}
+.citem{display:flex;gap:16px;align-items:flex-start;padding:22px;background:var(--card);border:1px solid var(--cb);border-radius:13px;transition:all .3s}
+.citem:hover{border-color:rgba(74,158,255,.22);background:rgba(74,158,255,.04);transform:translateX(5px)}
+.cico{width:46px;height:46px;border-radius:11px;background:linear-gradient(135deg,rgba(74,158,255,.14),rgba(74,158,255,.04));border:1px solid rgba(74,158,255,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .3s cubic-bezier(.22,.61,.36,1)}
+.citem:hover .cico{transform:scale(1.1) rotate(-3deg)}
+.ctxt h4{font-size:14px;font-weight:600;color:var(--wh);margin-bottom:4px}
+.ctxt p,.ctxt a{font-size:13.5px;color:var(--g3);text-decoration:none;transition:color .2s;display:block;margin-bottom:2px}
+.ctxt a:hover{color:var(--ac)}
+.cform{background:var(--card);border:1px solid var(--cb);border-radius:18px;padding:34px}
+.cform h3{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--wh);margin-bottom:6px}
+.cform .csub3{font-size:13.5px;color:var(--g3);margin-bottom:26px;line-height:1.65}
+.cfg{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.cfg label{font-size:12px;font-weight:600;color:var(--g2);letter-spacing:.3px}
+.cfg input,.cfg textarea{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.09);border-radius:10px;padding:11px 13px;font-size:14px;font-family:'Inter',sans-serif;color:var(--wh);outline:none;transition:all .25s;width:100%}
+.cfg input:focus,.cfg textarea:focus{border-color:var(--ac);background:rgba(74,158,255,.05);box-shadow:0 0 0 3px rgba(74,158,255,.1)}
+.cfg input::placeholder,.cfg textarea::placeholder{color:var(--g4)}
+.cfg textarea{min-height:96px;resize:vertical}
+.bcont{background:linear-gradient(135deg,var(--ac),#2D7FD6);color:var(--wh);border:none;padding:13px 26px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;width:100%;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:8px}
+.bcont:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(74,158,255,.4)}
+
+/* FOOTER */
+footer{background:var(--n1);padding:56px 48px 28px;border-top:1px solid rgba(255,255,255,.05)}
+.ftop2{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:44px;margin-bottom:44px}
+.fbrand p{font-size:13.5px;color:var(--g3);line-height:1.75;margin:11px 0 18px}
+.fsoc{display:flex;gap:10px}
+.sbtn{width:36px;height:36px;border-radius:9px;background:var(--card);border:1px solid var(--cb);display:flex;align-items:center;justify-content:center;transition:all .25s;cursor:pointer}
+.sbtn:hover{background:rgba(74,158,255,.09);border-color:rgba(74,158,255,.28)}
+.sbtn svg{width:16px;height:16px;color:var(--g3)}
+.fcol h4{font-size:12px;font-weight:600;color:var(--wh);letter-spacing:.5px;margin-bottom:14px;text-transform:uppercase;font-family:'Space Mono',monospace}
+.fcol ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.fcol ul a{font-size:13px;color:var(--g3);text-decoration:none;transition:color .2s;display:block}.fcol ul a:hover{color:var(--ac)}
+.fbot{border-top:1px solid rgba(255,255,255,.05);padding-top:26px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.fbot p{font-size:12px;color:var(--g4)}
+.fbadge{display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,.09);border:1px solid rgba(16,185,129,.2);color:var(--safe);padding:4px 12px;border-radius:100px;font-size:11px;font-weight:600;font-family:'Space Mono',monospace}
+
+/* RESPONSIVE */
+@media(max-width:1024px){.fgrid{grid-template-columns:repeat(2,1fr)}.ggrid{grid-template-columns:1fr}.aic{gap:40px}.ftop2{grid-template-columns:1fr 1fr;gap:28px}}
+@media(max-width:768px){
+  nav{padding:0 18px}.nlinks,.ncta{display:none}.ham{display:flex}
+  .hero{padding:96px 20px 56px}.hstats{grid-template-columns:repeat(2,1fr);gap:14px}
+  .sec{padding:60px 18px}
+  .fgrid{grid-template-columns:1fr}.aic{grid-template-columns:1fr}.aiv{display:none}
+  .hrow{flex-direction:column;gap:24px}.hrow::before{display:none}
+  .fgr{grid-template-columns:1fr}.fg.full{grid-column:span 1}.ctypes{grid-template-columns:1fr}
+  .fst{padding:22px 18px}.ftop{padding:18px 22px}
+  .subgrid{grid-template-columns:1fr}.scard.pop{transform:translateY(0)}
+  .cgrid{grid-template-columns:1fr}.ftop2{grid-template-columns:1fr;gap:28px}
+  .chead{flex-direction:column;gap:12px;text-align:center}.cscrow{flex-direction:column;align-items:flex-start}
+  .cmeta{flex-direction:column;gap:10px}.cbody{padding:18px}.cacts{flex-direction:column}
+  .matgrid{grid-template-columns:repeat(3,1fr)}
+  #CRPT{padding:18px}.ggrid{grid-template-columns:1fr}
+  footer{padding:44px 18px 24px}.fbot{flex-direction:column;text-align:center}
+}
+@media print{
+  nav,footer,.ncta,.ham,.mmenu,.hero{display:none!important}
+  #feats,#aisec,#govt,#how,#pricing,#contact{display:none!important}
+  #fsec{padding:0!important;background:#fff!important}
+  #fsec .ey,#fsec .sh,#fsec .ss,#fsec .fwrap{display:none!important}
+  #CRPT{display:block!important;padding:0}
+  .certwrap{border:1px solid #ccc;box-shadow:none}
+  body{background:#fff;color:#000}
+  .chead{background:linear-gradient(135deg,#04091A,#162B55)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .cwm{display:none}
+  .ctitle,.csub2{color:#fff!important}
+  .cidw .clbl,.cidw .cdate{color:#cbd5e1!important}
+  .cidw .cid{color:#F0A500!important}
+  .cscrow{background:#f4f6f9!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sinfo h3{color:#0C1A32!important}
+  .sinfo p{color:#333!important}
+  .cmi{color:#555!important}
+  .cmi strong{color:#0C1A32!important}
+  .rcard{border:1px solid #ccc!important;background:#fff!important}
+  .rchead{background:#f4f6f9!important;border-bottom:1px solid #ddd!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .rctitle{color:#0C1A32!important}
+  .rcbody p,.rcbody ul li{color:#222!important}
+  .rcbody ul li::before{background:#4A9EFF!important}
+  .matbox{background:#f4f6f9!important;border:1px solid #ddd!important}
+  .matv{color:#0C1A32!important}
+  .matl,.matw{color:#555!important}
+  .cfoot{background:#fff!important;border-top:1px solid #ccc!important}
+  .cfoot p{color:#555!important}
+  .rbs,.rbw,.rbd{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .cacts{display:none!important}
+}
+</style>
+
+<!-- SUBSCRIPTION -->
+<section class="sec darksec" id="pricing">
+  <div class="si">
+    <div class="ey reveal" style="justify-content:center">Subscription Plans</div>
+    <h2 class="sh reveal" style="text-align:center">Plans That Were Designed<br>for Every Need</h2>
+    <p class="ss reveal" style="text-align:center;margin:0 auto 56px">Every plan was structured to deliver maximum value for homeowners, investors, and civil engineering professionals.</p>
+    <div class="subgrid">
+      <div class="scard reveal d1">
+        <div class="sico" style="background:rgba(100,116,139,.14)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--g3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <div class="sprice">₹0 <span>/ forever</span></div>
+        <div class="sname">Free Starter</div>
+        <div class="sdesc">This plan was designed for homeowners and students who needed a basic plot overview before making major construction decisions.</div>
+        <ul class="slist">
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>2 Plot Passport reports per month</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Basic soil & foundation analysis</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Seismic zone classification</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Material quantity estimates</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Printable PDF report</li>
+        </ul>
+        <button class="bsub bso" onclick="openWA('Free Starter Plan Enquiry')">Get Started Free</button>
+      </div>
+      <div class="scard pop reveal d2">
+        <div class="pbadge">Most Popular</div>
+        <div class="sico" style="background:rgba(74,158,255,.14)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <div class="sprice">₹499 <span>/ month</span></div>
+        <div class="sname">Professional</div>
+        <div class="sdesc">This plan was built for civil engineers, architects, and real estate professionals who handled multiple plot assessments monthly.</div>
+        <ul class="slist">
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Unlimited Plot Passport reports</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Full analysis suite</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Reference data summary</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Priority WhatsApp support</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>IS code compliance checklist</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Branded report with your logo</li>
+        </ul>
+        <button class="bsub bsf" onclick="openWA('Professional Plan ₹499/month')">📱 Subscribe on WhatsApp</button>
+      </div>
+      <div class="scard reveal d3">
+        <div class="sico" style="background:rgba(240,165,0,.12)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <div class="sprice">₹1,999 <span>/ month</span></div>
+        <div class="sname">Enterprise</div>
+        <div class="sdesc">This plan was tailored for construction firms and banks requiring bulk plot assessments, API access, and white-label capabilities.</div>
+        <ul class="slist">
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Everything in Professional</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>API access for bulk integration</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Dedicated relationship manager</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>White-label report option</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Custom soil database integration</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>SLA-backed 24/7 support</li>
+        </ul>
+        <button class="bsub bsg" onclick="openWA('Enterprise Plan ₹1999/month')">📱 Contact for Enterprise</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="sec altsec contact-sec" id="contact">
+  <div class="si">
+    <div class="ey reveal">Contact Us</div>
+    <h2 class="sh reveal">We're Here to Help.</h2>
+    <p class="ss reveal">Every enquiry is reviewed and a personalised response is prepared as soon as possible. Reach out anytime.</p>
+    <div class="cgrid">
+      <div class="cinfo">
+        <div class="citem reveal">
+          <div class="cico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div class="ctxt"><h4>Email Us</h4><a href="mailto:santhoshtm1923@gmail.com">santhoshtm1923@gmail.com</a><p>Enquiries were responded to within 24 hours on business days.</p></div>
+        </div>
+        <div class="citem reveal">
+          <div class="cico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <div class="ctxt"><h4>Call or WhatsApp</h4><a href="tel:+919789798101">+91 9789 798 101</a><p>WhatsApp consultations were available Monday to Saturday, 9 AM – 7 PM IST.</p></div>
+        </div>
+        <div class="citem reveal">
+          <div class="cico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="ctxt"><h4>Response Time</h4><p>Email responses were guaranteed within 24 hours.</p><p>WhatsApp replies were sent within 2 hours during business hours.</p></div>
+        </div>
+        <div class="citem reveal">
+          <div class="cico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="ctxt"><h4>Service Coverage</h4><p>PlotPassport serves all 28 states and 8 union territories of India.</p><p>Reference data is available for 700+ districts nationwide.</p></div>
+        </div>
+      </div>
+      <div class="cform revR">
+        <h3>Send a Message</h3>
+        <p class="csub3">Your enquiry is reviewed and a personalised response is prepared as soon as possible.</p>
+        <div class="cfg"><label>Your Name</label><input type="text" id="cf1" placeholder="Enter your full name"></div>
+        <div class="cfg"><label>Email Address</label><input type="email" id="cf2" placeholder="your@email.com"></div>
+        <div class="cfg"><label>Subject</label><input type="text" id="cf3" placeholder="e.g. Plot Consultation Enquiry"></div>
+        <div class="cfg"><label>Message</label><textarea id="cf4" placeholder="Describe your plot, location, and what kind of help you needed..."></textarea></div>
+        <button class="bcont" onclick="sendContact()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Send via WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="si">
+    <div class="ftop2">
+      <div class="fbrand">
+        <a href="#" class="nlogo" style="text-decoration:none;display:inline-flex;margin-bottom:4px">
+          <div class="nli"><img src="data:image/jpeg;base64,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" alt="ZWIC Construction logo" style="width:100%;height:100%;object-fit:cover"></div>
+          <span class="nbrand"><span class="nco">ZWIC</span><span class="nlt" style="font-size:18px">Plot<span>Passport</span></span></span>
+        </a>
+        <p>An AI-assisted pre-construction plot intelligence tool for India. Reports draw on published government reference data, IS codes, and civil engineering expertise. Not an official or government-issued document.</p>
+        <div class="fsoc">
+          <div class="sbtn" onclick="openWA('Hello from PlotPassport')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.125.554 4.122 1.524 5.855L.057 24l6.305-1.654A11.954 11.954 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.007-1.371l-.359-.214-3.741.981.998-3.648-.234-.374A9.818 9.818 0 1 1 12 21.818z"/></svg></div>
+          <div class="sbtn" onclick="window.location.href='mailto:santhoshtm1923@gmail.com'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div class="sbtn" onclick="window.location.href='tel:+919789798101'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+        </div>
+      </div>
+      <div class="fcol"><h4>Features</h4><ul><li><a href="#feats">Soil & Foundation</a></li><li><a href="#feats">Disaster Zone Report</a></li><li><a href="#feats">Orientation Analysis</a></li><li><a href="#feats">Material Calculator</a></li><li><a href="#feats">Waterproofing Alert</a></li><li><a href="#feats">Plot Report</a></li></ul></div>
+      <div class="fcol"><h4>Company</h4><ul><li><a href="#aisec">AI Technology</a></li><li><a href="#govt">Data Sources</a></li><li><a href="#pricing">Pricing Plans</a></li><li><a href="#contact">Contact Us</a></li></ul></div>
+      <div class="fcol"><h4>Contact</h4><ul><li><a href="mailto:santhoshtm1923@gmail.com">santhoshtm1923@gmail.com</a></li><li><a href="tel:+919789798101">+91 9789 798 101</a></li><li><a href="#" onclick="openWA('Hello')">WhatsApp Us</a></li></ul></div>
+      <div class="fcol"><h4>Legal</h4><ul><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms of Service</a></li><li><a href="refund.html">Refund Policy</a></li></ul></div>
+    </div>
+    <div class="fbot">
+      <p>© 2026 PlotPassport · Advisory tool only, not a government-issued document · Data sourced from published BIS and public agency reference tables, developed by Santhosh TM</p>
+      <div class="fbadge"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>IS Code Referenced</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const COMPANY_LOGO = "data:image/jpeg;base64,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";
+const MWA="919789798101";
+const DZD={"delhi":{s:"IV",sf:"High",f:"Moderate",c:"None"},"gurugram":{s:"IV",sf:"High",f:"Low",c:"None"},"gurgaon":{s:"IV",sf:"High",f:"Low",c:"None"},"noida":{s:"IV",sf:"High",f:"Moderate",c:"None"},"mumbai":{s:"III",sf:"Moderate",f:"High",c:"Low"},"pune":{s:"III",sf:"Moderate",f:"Low",c:"None"},"nashik":{s:"III",sf:"Moderate",f:"Moderate",c:"None"},"nagpur":{s:"II",sf:"Low",f:"Moderate",c:"None"},"thane":{s:"III",sf:"Moderate",f:"High",c:"None"},"bangalore":{s:"II",sf:"Low",f:"Low",c:"None"},"bengaluru":{s:"II",sf:"Low",f:"Low",c:"None"},"mysore":{s:"II",sf:"Low",f:"Low",c:"None"},"mysuru":{s:"II",sf:"Low",f:"Low",c:"None"},"hubli":{s:"II",sf:"Low",f:"Low",c:"None"},"mangalore":{s:"II",sf:"Low",f:"Moderate",c:"Low"},"mangaluru":{s:"II",sf:"Low",f:"Moderate",c:"Low"},"chennai":{s:"III",sf:"Moderate",f:"High",c:"High"},"coimbatore":{s:"III",sf:"Moderate",f:"Low",c:"Low"},"madurai":{s:"II",sf:"Low",f:"Low",c:"Low"},"trichy":{s:"II",sf:"Low",f:"Moderate",c:"Low"},"hyderabad":{s:"II",sf:"Low",f:"Moderate",c:"None"},"vijayawada":{s:"III",sf:"Moderate",f:"High",c:"Moderate"},"visakhapatnam":{s:"II",sf:"Low",f:"High",c:"High"},"vizag":{s:"II",sf:"Low",f:"High",c:"High"},"nellore":{s:"III",sf:"Moderate",f:"Moderate",c:"High"},"kochi":{s:"III",sf:"Moderate",f:"High",c:"Moderate"},"trivandrum":{s:"II",sf:"Low",f:"Moderate",c:"Moderate"},"thiruvananthapuram":{s:"II",sf:"Low",f:"Moderate",c:"Moderate"},"kozhikode":{s:"II",sf:"Low",f:"Moderate",c:"Moderate"},"ahmedabad":{s:"III",sf:"Moderate",f:"Moderate",c:"Low"},"surat":{s:"III",sf:"Moderate",f:"High",c:"Moderate"},"vadodara":{s:"III",sf:"Moderate",f:"Moderate",c:"Low"},"rajkot":{s:"III",sf:"Moderate",f:"Low",c:"Low"},"jaipur":{s:"II",sf:"Low",f:"Low",c:"None"},"jodhpur":{s:"II",sf:"Low",f:"Low",c:"None"},"udaipur":{s:"II",sf:"Low",f:"Low",c:"None"},"lucknow":{s:"III",sf:"Moderate",f:"Moderate",c:"None"},"kanpur":{s:"III",sf:"Moderate",f:"Moderate",c:"None"},"agra":{s:"III",sf:"Moderate",f:"Moderate",c:"None"},"varanasi":{s:"III",sf:"Moderate",f:"High",c:"None"},"prayagraj":{s:"III",sf:"Moderate",f:"High",c:"None"},"meerut":{s:"IV",sf:"High",f:"Moderate",c:"None"},"ghaziabad":{s:"IV",sf:"High",f:"Moderate",c:"None"},"patna":{s:"IV",sf:"High",f:"Very High",c:"None"},"ranchi":{s:"II",sf:"Low",f:"Moderate",c:"None"},"bhopal":{s:"II",sf:"Low",f:"Moderate",c:"None"},"indore":{s:"II",sf:"Low",f:"Moderate",c:"None"},"jabalpur":{s:"III",sf:"Moderate",f:"Moderate",c:"None"},"bhubaneswar":{s:"II",sf:"Low",f:"High",c:"High"},"cuttack":{s:"III",sf:"Moderate",f:"High",c:"High"},"chandigarh":{s:"IV",sf:"High",f:"Low",c:"None"},"ludhiana":{s:"IV",sf:"High",f:"Moderate",c:"None"},"amritsar":{s:"IV",sf:"High",f:"Moderate",c:"None"},"dehradun":{s:"IV",sf:"High",f:"Moderate",c:"None"},"haridwar":{s:"IV",sf:"High",f:"High",c:"None"},"shimla":{s:"IV",sf:"High",f:"Moderate",c:"None"},"srinagar":{s:"V",sf:"Very High",f:"High",c:"None"},"jammu":{s:"IV",sf:"High",f:"Moderate",c:"None"},"guwahati":{s:"V",sf:"Very High",f:"Very High",c:"None"},"imphal":{s:"V",sf:"Very High",f:"High",c:"None"},"shillong":{s:"V",sf:"Very High",f:"High",c:"None"}};
+const SDD={"Andhra Pradesh":{s:"II-III",sf:"Low-Moderate",f:"Moderate",c:"Moderate"},"Assam":{s:"V",sf:"Very High",f:"Very High",c:"None"},"Bihar":{s:"IV",sf:"High",f:"Very High",c:"None"},"Chhattisgarh":{s:"II",sf:"Low",f:"Moderate",c:"None"},"Delhi":{s:"IV",sf:"High",f:"Moderate",c:"None"},"Goa":{s:"III",sf:"Moderate",f:"Moderate",c:"Low"},"Gujarat":{s:"III-IV",sf:"Moderate-High",f:"Moderate",c:"Low"},"Haryana":{s:"III-IV",sf:"Moderate-High",f:"Low",c:"None"},"Himachal Pradesh":{s:"IV-V",sf:"High-Very High",f:"Moderate",c:"None"},"Jammu & Kashmir":{s:"IV-V",sf:"High-Very High",f:"Moderate",c:"None"},"Jharkhand":{s:"II-III",sf:"Low-Moderate",f:"Moderate",c:"None"},"Karnataka":{s:"II",sf:"Low",f:"Low",c:"None"},"Kerala":{s:"II-III",sf:"Low-Moderate",f:"High",c:"Moderate"},"Madhya Pradesh":{s:"II-III",sf:"Low-Moderate",f:"Moderate",c:"None"},"Maharashtra":{s:"II-III",sf:"Low-Moderate",f:"Moderate",c:"None"},"Manipur":{s:"V",sf:"Very High",f:"High",c:"None"},"Meghalaya":{s:"V",sf:"Very High",f:"High",c:"None"},"Odisha":{s:"II-III",sf:"Low-Moderate",f:"High",c:"High"},"Punjab":{s:"III-IV",sf:"Moderate-High",f:"Moderate",c:"None"},"Rajasthan":{s:"II-III",sf:"Low-Moderate",f:"Low",c:"None"},"Tamil Nadu":{s:"II-III",sf:"Low-Moderate",f:"Moderate",c:"High"},"Telangana":{s:"II",sf:"Low",f:"Moderate",c:"None"},"Uttar Pradesh":{s:"II-IV",sf:"Moderate",f:"Moderate",c:"None"},"Uttarakhand":{s:"IV-V",sf:"High-Very High",f:"High",c:"None"},"West Bengal":{s:"III-IV",sf:"Moderate-High",f:"High",c:"Moderate"}};
+const SOILD={"bcs":{n:"Black Cotton Soil",f:"Under-reamed pile (IS 11446) or RCC raft foundation",d:"2.0–2.5 m",sbc:60,r:"high",w:"Black cotton soil was known to expand on wetting and shrink on drying — causing severe structural cracking when incorrect foundations were used. Strip footings were strictly avoided on BCS."},"rls":{n:"Red Laterite Soil",f:"Spread footing or strip foundation",d:"1.2–1.5 m",sbc:150,r:"safe",w:"Laterite was assessed as generally well-suited for construction when adequate drainage was maintained around the foundation perimeter."},"sandy":{n:"Sandy / Loose Soil",f:"RCC raft or well-compacted strip footing",d:"1.5–2.0 m",sbc:100,r:"warn",w:"Sandy soil exhibited poor cohesion and carried a risk of liquefaction in seismic zones. Proper compaction and lateral confinement were identified as critical requirements."},"clay":{n:"Clayey Soil",f:"RCC raft or mat foundation",d:"1.5–2.0 m",sbc:80,r:"warn",w:"Clayey soil had low permeability and moderate swell potential. Settlement risk was assessed as moderate. Drainage around the foundation perimeter was flagged as essential."},"loam":{n:"Loamy / Mixed Soil",f:"Isolated column footing or strip foundation",d:"1.0–1.5 m",sbc:175,r:"safe",w:"Loamy soil was assessed as well-balanced and safe for construction. Standard IS 1904 provisions were determined to be sufficient for the planned construction."},"rock":{n:"Rock / Hard Murrum",f:"Shallow isolated column footing",d:"0.6–0.9 m",sbc:350,r:"safe",w:"Rock offered the best foundation bearing capacity of all categories. Minimal depth was required. Blasting was flagged as potentially necessary for deeper excavation if needed."},"alluvial":{n:"Alluvial / River Deposit",f:"RCC raft or mat foundation",d:"1.5–2.5 m",sbc:100,r:"warn",w:"Alluvial deposits were assessed as variable. Water table proximity near river banks was identified as a significant risk factor requiring deeper foundation consideration."},"idk":{n:"Unknown Soil Type",f:"RCC raft foundation (conservative choice pending soil investigation)",d:"1.5–2.0 m",sbc:100,r:"warn",w:"Soil type could not be determined from submitted data. A plate load test (IS 1888) or Standard Penetration Test (SPT) was strongly recommended before construction commenced."}};
+const FACED={"N":{n:"North",s:"The North-facing plot was assessed as one of the most favourable orientations for India. Balanced daylight with no harsh direct sun was confirmed — optimal for living spaces and bedrooms.",p:["Main entrance on North or North-East was confirmed as climatically sound and Vastu-compliant","Living rooms and master bedroom were recommended on the North facade for balanced daylight","Kitchen on the North-East corner was identified as receiving optimal morning light with cross-ventilation","Minimum 600mm chajja on all window openings was specified to prevent rain ingress","Heavy structural walls on the North were advised against to preserve the natural daylight advantage"],r:"safe"},"S":{n:"South",s:"The South-facing plot received good winter sunlight but required sun-shading measures to prevent summer overheating. The orientation was assessed as manageable with correct design interventions.",p:["A chajja of minimum 600mm depth was specified for all South-facing windows","Bathrooms and utility rooms were recommended for placement on the South side","Light-coloured exterior paint on the South wall was advised to reduce heat absorption by 15%","Deciduous trees on the South boundary were recommended for seasonal shading","Living rooms facing South were approved when solar shading devices were installed"],r:"safe"},"E":{n:"East",s:"The East-facing plot was assessed as excellent for Indian climate. Morning sunlight warmed rooms naturally with cool afternoons — well-suited for bedrooms and principal living areas.",p:["Bedrooms on the East received gentle morning sun — identified as ideal for natural wake cycles","Kitchen on the East was confirmed to receive optimal morning light for cooking efficiently","Large glazed windows on the West were advised against to prevent afternoon heat gain","East-facing plots were computed to have the lowest summer cooling load of all orientations","East-West window alignment was recommended for maximum cross-ventilation airflow"],r:"safe"},"W":{n:"West",s:"The West-facing plot was assessed as receiving intense afternoon sun, increasing cooling costs significantly. Proper wall thickness and shading were identified as essential mitigations.",p:["230mm or thicker external walls on the West facade were specified for thermal insulation","Openings on the West were minimised — small ventilators were recommended over large windows","Garage, store room, and service areas were advised for placement on the West side","Thick evergreen trees along the West boundary were recommended for permanent shading","Reflective exterior paint on the West wall was projected to reduce surface heat by 15%"],r:"warn"},"NE":{n:"North-East",s:"The North-East corner plot was assessed as the most favourable orientation available. Morning sun, cool afternoons, and maximum cross-ventilation were all confirmed — simultaneously Vastu-compliant and climatically optimal.",p:["This was identified as the most desirable orientation — all principal rooms were assessed as equally benefiting","Main door on the North-East was confirmed as both Vastu-compliant and climatically sound","Maximum cross-ventilation was achieved by aligning windows on the North-East and South-West walls","The lowest energy bills of all orientations were projected due to optimal natural light distribution","This plot was recommended over all other orientations when a choice was available"],r:"safe"},"NW":{n:"North-West",s:"The North-West corner plot was found to receive good ventilation from prevailing winds in most Indian regions. Morning shade with afternoon breeze created a comfortable thermal environment.",p:["Bedrooms on the North or West were found to receive good afternoon ventilation","Service areas were recommended for placement on the South-West corner","Sun shading on the West facade was specified to manage afternoon heat gain","North-West to South-East window alignment was confirmed as optimal for cross-ventilation","Orientation was classified as moderate — energy consumption was projected at average levels"],r:"safe"},"SE":{n:"South-East",s:"The South-East corner plot received morning sun from the East and afternoon heat from the South. It was assessed as manageable with correct room placement and wall treatment.",p:["Kitchen on the South-East was confirmed as traditional placement receiving excellent morning light","Bedrooms were recommended to face East — South-facing sleeping areas were advised against","Chajjas on South windows were specified to control summer heat gain effectively","The East facade was confirmed to benefit from morning cross-breezes — openings were maximised here","Orientation was classified as moderate — standard sun-shading on South was specified"],r:"safe"},"NA":{n:"Direction Unknown",s:"Plot facing direction could not be confirmed from submitted data. Exact orientation was flagged as critical before finalising floor plans, as it was projected to impact energy costs by 20–30%.",p:["A compass app was recommended to determine the exact plot facing direction","An architect was advised to analyse sun path and wind before design commenced","East and North-East orientations were identified as preferred for Indian climate","Large windows on the West were advised against until sun direction was confirmed","Correct orientation planning was projected to reduce electricity bills by ₹10,000–30,000 annually"],r:"warn"}};
+function getDZ(d,s){const k=d.toLowerCase().trim();if(DZD[k])return DZD[k];if(DZD[k.split(' ')[0]])return DZD[k.split(' ')[0]];if(SDD[s])return SDD[s];return{s:"II-III",sf:"Moderate",f:"Moderate",c:"Low"};}
+function fM(f){return{G:1,G1:2,G2:3,G3:4}[f]||1;}
+function cMat(a,f,ct){const m=fM(f),bu=a*m*.7,r=ct==='ind'?{c:.45,s:4.5,b:8,sd:.55,ag:.65}:{c:.38,s:3.8,b:9,sd:.5,ag:.6};return{cement:Math.round(bu*r.c),steel:Math.round(bu*r.s),brick:Math.round(bu*r.b),sand:Math.round(bu*r.sd),agg:Math.round(bu*r.ag),wc:Math.round(bu*r.c*.07),ws:Math.round(bu*r.s*.05),wb:Math.round(bu*r.b*.1)};}
+function cScore(dz,soil,wt,topo,wb){let sc=78;if(dz.sf==="Very High")sc-=20;else if(dz.sf.includes("High"))sc-=12;else if(dz.sf.includes("Moderate"))sc-=6;if(dz.f==="Very High")sc-=14;else if(dz.f==="High")sc-=8;else if(dz.f==="Moderate")sc-=4;if(dz.c==="Very High")sc-=10;else if(dz.c==="High")sc-=6;else if(dz.c==="Moderate")sc-=3;const sr={bcs:-14,rls:4,sandy:-8,clay:-6,loam:4,rock:12,alluvial:-5,idk:-4};sc+=(sr[soil]||0);const wn=parseInt(wt)||99;if(wn<5)sc-=14;else if(wn<10)sc-=8;else if(wn<15)sc-=3;else if(wn>25)sc+=4;if(topo==="low")sc-=10;else if(topo==="steep")sc-=5;else if(topo==="flat")sc+=3;if(wb!=="none")sc-=6;return Math.max(10,Math.min(100,sc));}
+let selCT="";
+function pCT(el,v){document.querySelectorAll(".ctype").forEach(c=>c.classList.remove("sel"));el.classList.add("sel");selCT=v;}
+function gto(id){document.getElementById(id)?.scrollIntoView({behavior:"smooth"});}
+function toggleMenu(){document.getElementById("ham").classList.toggle("op");document.getElementById("mm").classList.toggle("op");}
+function closeMenu(){document.getElementById("ham").classList.remove("op");document.getElementById("mm").classList.remove("op");}
+window.addEventListener("load",()=>{
+  const pl = document.getElementById("pageLoader");
+  if (pl) setTimeout(()=>pl.classList.add("done"), 250);
+});
+
+window.addEventListener("scroll",()=>{document.getElementById("nb").classList.toggle("sc",window.scrollY>80);});
+
+// Subtle parallax for the hero background layers — throttled with requestAnimationFrame for smooth, cheap scrolling
+(function(){
+  const hgrid = document.querySelector(".hgrid"), hgl1 = document.querySelector(".hgl1"), hgl2 = document.querySelector(".hgl2");
+  const heroEl = document.querySelector(".hero");
+  if (!hgrid || !heroEl) return;
+  let ticking = false;
+  function applyParallax(){
+    const rect = heroEl.getBoundingClientRect();
+    if (rect.bottom > 0 && rect.top < window.innerHeight){
+      const p = window.scrollY;
+      hgrid.style.transform = "translateY(" + (p * 0.12) + "px)";
+      hgl1.style.transform = "translate3d(" + (p * -0.06) + "px," + (p * 0.08) + "px,0)";
+      hgl2.style.transform = "translate3d(" + (p * 0.05) + "px," + (p * -0.07) + "px,0)";
+    }
+    ticking = false;
+  }
+  window.addEventListener("scroll", () => {
+    if (!ticking){ requestAnimationFrame(applyParallax); ticking = true; }
+  }, { passive: true });
+})();
+function goSt(n){
+  if(n===2){if(!document.getElementById("vn").value.trim()||!document.getElementById("vs").value||!document.getElementById("vd").value.trim()||!document.getElementById("va").value){alert("Please fill all required fields.");return;}}
+  if(n===3){if(!document.getElementById("vso").value){alert("Please select a soil type.");return;}if(!selCT){alert("Please select a construction type.");return;}}
+  for(let i=1;i<=3;i++){document.getElementById("fs"+i).classList.remove("active");const d=document.getElementById("pd"+i);d.classList.remove("act","dn");if(i<n)d.classList.add("dn");else if(i===n)d.classList.add("act");}
+  document.getElementById("fs"+n).classList.add("active");
+}
+async function animLoad(){for(let i=1;i<=6;i++){const el=document.getElementById("l"+i);el.classList.add("act");await new Promise(r=>setTimeout(r,420));el.classList.remove("act");el.classList.add("done");el.textContent="✅ "+el.textContent.replace(/^..\s/,"");}}
+
+// Sends the lead to our own backend (server.js -> /api/leads) so it shows up in /admin.html
+function sendLeadToBackend(d){
+  return fetch('/api/leads', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: d.name,
+      state: d.state,
+      area: d.area,
+      constructionType: ctL(d.ct),
+      plotHealthScore: d.score,
+      district: d.dist,
+      whatsapp: d.waNum || ''
+    })
+  }).then(r => r.json()).catch(err => { console.error('Could not save lead:', err); return null; });
+}
+
+// Builds a real downloadable PDF of the report using jsPDF, returns the jsPDF doc object
+function generateReportPDF(d, sects, rId, dateStr){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const pw = doc.internal.pageSize.getWidth();
+  const ph = doc.internal.pageSize.getHeight();
+  const NAVY = [12,26,50], GOLD = [240,165,0], BLUE = [74,158,255], LGRAY = [244,246,249], TXT = [40,45,55], MUT = [110,118,130], WHITE=[255,255,255];
+  const MARGIN = 24, PAD = 46, BODY_BOTTOM = ph - 92;
+  let pageNum = 0;
+
+  // jsPDF's built-in fonts only support the WinAnsi (cp1252) character set.
+  // The ₹ symbol and emoji fall outside it and corrupt the text stream if left in — strip/replace them here.
+  function sanitizeText(s){
+    if (!s) return '';
+    return String(s)
+      .replace(/₹/g, 'Rs. ')
+      .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\uFE0F]/gu, '')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  }
+
+  function scoreColor(s){ return s>=70?[16,185,129]:s>=50?[245,158,11]:[239,68,68]; }
+  function riskColor(r){ return r==="safe"?[16,185,129]:r==="high"?[239,68,68]:[245,158,11]; }
+  function riskLabel(r){ return r==="safe"?"LOW RISK":r==="high"?"HIGH RISK":"MODERATE"; }
+  function getSec(tp){ return sects.find(s=>s.tp===tp); }
+
+  function drawWatermark(){
+    doc.saveGraphicsState();
+    doc.setGState(new doc.GState({ opacity: 0.045 }));
+    doc.setFont('times','bold'); doc.setFontSize(70); doc.setTextColor(...BLUE);
+    doc.text('PLOTPASSPORT', pw/2, ph/2, { align: 'center', angle: 35 });
+    doc.restoreGraphicsState();
+  }
+
+  function drawSeal(cx, cy){
+    doc.setDrawColor(...GOLD); doc.setLineWidth(1.3); doc.circle(cx, cy, 30, 'S');
+    doc.setLineWidth(0.6); doc.circle(cx, cy, 25, 'S');
+    doc.setFont('helvetica','bold'); doc.setFontSize(5.5); doc.setTextColor(...GOLD);
+    doc.text('PLOTPASSPORT', cx, cy - 12, { align: 'center' });
+    doc.setFontSize(8);
+    doc.text('FOR REVIEW', cx, cy + 2, { align: 'center' });
+    doc.setFontSize(5.5);
+    doc.text('SANTHOSH \u2122', cx, cy + 13, { align: 'center' });
+  }
+
+  function drawFooter(){
+    const fY = ph - MARGIN - 30;
+    doc.setDrawColor(215); doc.setLineWidth(0.6); doc.line(PAD, fY, pw - PAD - 60, fY);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...MUT);
+    doc.text('PlotPassport  \u00b7  Confidential Client Report  \u00b7  Prepared by Santhosh TM', PAD, fY + 14);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...MUT);
+    doc.text('Page ' + pageNum, pw - PAD, fY + 14, { align: 'right' });
+    drawSeal(pw - PAD - 22, fY - 20);
+  }
+
+  function drawFrame(){
+    doc.setDrawColor(...NAVY); doc.setLineWidth(1.1);
+    doc.rect(MARGIN, MARGIN, pw - MARGIN*2, ph - MARGIN*2);
+    doc.setDrawColor(...GOLD); doc.setLineWidth(0.5);
+    doc.rect(MARGIN + 5, MARGIN + 5, pw - (MARGIN+5)*2, ph - (MARGIN+5)*2);
+  }
+
+  function drawHeader(title){
+    const hY = MARGIN + 5, hH = 46;
+    doc.setFillColor(...NAVY); doc.rect(MARGIN + 5, hY, pw - (MARGIN+5)*2, hH, 'F');
+    doc.setDrawColor(...GOLD); doc.setLineWidth(1.2); doc.line(MARGIN+5, hY+hH, pw-MARGIN-5, hY+hH);
+    try { doc.addImage(COMPANY_LOGO, 'JPEG', PAD, hY + 7, 32, 32); } catch(e) {}
+    doc.setFont('times','bold'); doc.setFontSize(14); doc.setTextColor(...WHITE);
+    doc.text('PlotPassport', PAD + 40, hY + 28);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(190,205,225);
+    doc.text(title, pw - PAD, hY + 18, { align: 'right' });
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...GOLD);
+    doc.text('Report ID: ' + rId, pw - PAD, hY + 32, { align: 'right' });
+    return hY + hH + 24;
+  }
+
+  function chrome(title){
+    pageNum++;
+    drawFrame(); drawWatermark();
+    drawFooter();
+    return drawHeader(title);
+  }
+
+  function newPage(title){
+    doc.addPage();
+    return chrome(title);
+  }
+
+  let currentTitle = '';
+  function ensureSpace(y, need){
+    if (y + need > BODY_BOTTOM) return newPage(currentTitle);
+    return y;
+  }
+
+  function sectionLeftBar(y0, y1){
+    doc.setFillColor(...BLUE); doc.rect(PAD - 16, y0, 3, Math.max(y1 - y0,4), 'F');
+  }
+
+  function sectionHeading(y, text){
+    doc.setFont('times','bold'); doc.setFontSize(15); doc.setTextColor(...NAVY);
+    doc.text(text, PAD, y);
+    doc.setDrawColor(...GOLD); doc.setLineWidth(1.2);
+    doc.line(PAD, y + 8, PAD + 70, y + 8);
+    return y + 30;
+  }
+
+  function paragraph(y, text, size){
+    text = sanitizeText(text);
+    doc.setFont('helvetica','normal'); doc.setFontSize(size||9); doc.setTextColor(...TXT);
+    const lines = doc.splitTextToSize(text, pw - PAD*2 - 4);
+    y = ensureSpace(y, lines.length * 12 + 4);
+    doc.text(lines, PAD, y);
+    return y + lines.length * 12 + 10;
+  }
+
+  function bulletList(y, pts){
+    pts.forEach(p => {
+      p = sanitizeText(p);
+      const lines = doc.splitTextToSize(p, pw - PAD*2 - 22);
+      y = ensureSpace(y, lines.length * 11 + 3);
+      doc.setFillColor(...BLUE); doc.circle(PAD + 5, y - 3, 1.4, 'F');
+      doc.setFont('helvetica','normal'); doc.setFontSize(8.7); doc.setTextColor(...TXT);
+      doc.text(lines, PAD + 12, y);
+      y += lines.length * 11 + 3;
+    });
+    return y + 8;
+  }
+
+  function calloutBox(y, title, pts, color){
+    pts = pts.map(sanitizeText);
+    const c = color || GOLD;
+    const lineH = 11.5;
+    const TOP_OFFSET = 34; // matches iy start (boxY+18) plus title line height (16) below, i.e. where bullet content begins
+    const BOTTOM_PAD = 16;
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5); // must match the font used below, so wrapping estimates are accurate
+    let contentH = 0;
+    pts.forEach(p => { contentH += doc.splitTextToSize(p, pw - PAD*2 - 44).length * lineH; });
+    const estH = TOP_OFFSET + contentH + BOTTOM_PAD;
+    y = ensureSpace(y, estH + 10);
+    const boxY = y;
+    doc.setFillColor(...LGRAY); doc.setDrawColor(...c); doc.setLineWidth(1);
+    doc.roundedRect(PAD, boxY, pw - PAD*2, estH, 6, 6, 'FD');
+    let iy = boxY + 18;
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...NAVY);
+    doc.text(title, PAD + 14, iy); iy += 16;
+    pts.forEach(p => {
+      const lines = doc.splitTextToSize(p, pw - PAD*2 - 44);
+      doc.setFillColor(...c); doc.circle(PAD + 18, iy - 3, 1.4, 'F');
+      doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...TXT);
+      doc.text(lines, PAD + 26, iy);
+      iy += lines.length * lineH;
+    });
+    return boxY + estH + 16;
+  }
+
+  function infoTable(y, rows){
+    const rowH = 20, colX = PAD + 150;
+    rows.forEach((r,i) => {
+      y = ensureSpace(y, rowH);
+      if (i % 2 === 0){ doc.setFillColor(...LGRAY); doc.rect(PAD, y - 13, pw - PAD*2, rowH, 'F'); }
+      doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...NAVY);
+      doc.text(r[0], PAD + 10, y);
+      doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...TXT);
+      doc.text(String(r[1]), colX, y);
+      y += rowH;
+    });
+    return y + 10;
+  }
+
+  function materialsTable(y, items){
+    const colW = (pw - PAD*2) / items.length;
+    y = ensureSpace(y, 50);
+    items.forEach((it, i) => {
+      const bx = PAD + i*colW;
+      doc.setFillColor(...LGRAY); doc.roundedRect(bx, y, colW - 8, 40, 5, 5, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...NAVY);
+      doc.text(it[1], bx + (colW-8)/2, y + 18, { align: 'center' });
+      doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...MUT);
+      doc.text(it[0], bx + (colW-8)/2, y + 30, { align: 'center' });
+    });
+    return y + 56;
+  }
+
+  function riskBadge(y, r){
+    const rc = riskColor(r), lbl = riskLabel(r);
+    doc.setFontSize(7); const bw = doc.getTextWidth(lbl) + 14;
+    doc.setFillColor(rc[0],rc[1],rc[2]);
+    doc.roundedRect(pw - PAD - bw, y - 10, bw, 14, 7, 7, 'F');
+    doc.setTextColor(255,255,255); doc.text(lbl, pw - PAD - bw/2, y, { align: 'center' });
+  }
+
+  // ================= COVER PAGE =================
+  drawFrame();
+  doc.setDrawColor(...GOLD); doc.setLineWidth(0.8);
+  doc.rect(MARGIN + 14, MARGIN + 14, pw - (MARGIN+14)*2, ph - (MARGIN+14)*2);
+  drawWatermark();
+  try {
+    doc.addImage(COMPANY_LOGO, 'JPEG', pw/2 - 44, 96, 88, 88);
+  } catch(e) {
+    doc.setDrawColor(...GOLD); doc.setLineWidth(0.6);
+    doc.circle(pw/2, 150, 40, 'S'); doc.circle(pw/2, 150, 34, 'S');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...GOLD);
+    doc.text('LOGO', pw/2, 154, { align: 'center' });
+  }
+  doc.setFont('times','bold'); doc.setFontSize(34); doc.setTextColor(...NAVY);
+  doc.text('PlotPassport', pw/2, 250, { align: 'center' });
+  doc.setDrawColor(...GOLD); doc.setLineWidth(1); doc.line(pw/2 - 60, 264, pw/2 + 60, 264);
+  doc.setFont('times','italic'); doc.setFontSize(15); doc.setTextColor(...TXT);
+  doc.text('Pre-Construction Intelligence Report', pw/2, 292, { align: 'center' });
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(...MUT);
+  doc.text('Confidential Client Report', pw/2, 312, { align: 'center' });
+
+  doc.setFillColor(...LGRAY); doc.roundedRect(pw/2 - 140, 380, 280, 110, 8, 8, 'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...NAVY);
+  doc.text('Prepared For', pw/2 - 120, 406); doc.text('Prepared By', pw/2 - 120, 428); doc.text('Report ID', pw/2 - 120, 450); doc.text('Date', pw/2 - 120, 472);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...TXT);
+  doc.text(d.name, pw/2 + 10, 406);
+  doc.text('Santhosh TM \u2014 PlotPassport', pw/2 + 10, 428);
+  doc.text(rId, pw/2 + 10, 450);
+  doc.text(dateStr, pw/2 + 10, 472);
+
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...MUT);
+  doc.text('PlotPassport  \u00b7  Confidential Client Report  \u00b7  Prepared by Santhosh TM', pw/2, ph - 60, { align: 'center' });
+  drawSeal(pw/2, ph - 110);
+  pageNum = 1;
+
+  // ================= EXECUTIVE SUMMARY =================
+  currentTitle = 'Executive Summary';
+  let y = newPage(currentTitle);
+  y = sectionHeading(y, 'Executive Summary');
+  const band = d.score>=70?'favourable':d.score>=50?'moderate-risk':'high-risk';
+  const execText = 'This report presents a pre-construction analysis of the plot located in ' + d.dist + ', ' + d.state + ', prepared for ' + d.name + '. Based on an assessment of soil conditions, seismic zone classification, flood risk, orientation, and site topography, the plot has been assigned a Plot Health Score of ' + d.score + ' out of 100, placing it in the ' + band + ' category. The sections that follow present detailed findings across each risk and planning category, together with estimated material requirements and professional recommendations for consideration before construction begins.';
+  y = paragraph(y, execText, 9.5);
+  y = calloutBox(y, 'Key Takeaway', [
+    d.score>=70 ? 'Overall conditions are favourable for construction, subject to the standard precautions detailed in this report.' : d.score>=50 ? 'Construction may proceed with caution; the recommendations in this report should be treated as mandatory.' : 'Multiple risk factors were identified; a licensed structural engineer review is strongly advised before proceeding.',
+    'A certified soil investigation and licensed structural engineer sign-off remain mandatory regardless of this score.'
+  ], scoreColor(d.score));
+
+  // ================= PLOT INFORMATION =================
+  currentTitle = 'Plot Information';
+  y = ensureSpace(y, 60);
+  y = sectionHeading(y, 'Plot Information');
+  y = infoTable(y, [
+    ['Owner / Applicant', d.name],
+    ['Location', d.dist + ', ' + d.state],
+    ['Plot Area', d.area + ' sq ft'],
+    ['Construction Type', ctL(d.ct)],
+    ['Floors Planned', flL(d.floors)],
+    ['Plot Health Score', d.score + ' / 100']
+  ]);
+
+  // ================= MATERIAL REQUIREMENTS =================
+  const matSec = getSec('mat');
+  if (matSec){
+    currentTitle = 'Material Requirements';
+    y = ensureSpace(y, 80);
+    y = sectionHeading(y, 'Material Requirements');
+    y = materialsTable(y, [['Cement', matSec.matSummary.cement + ' bags'],['Steel', matSec.matSummary.steel + ' kg'],['Bricks', matSec.matSummary.brick],['Sand', matSec.matSummary.sand + ' cft'],['Aggregate', matSec.matSummary.agg + ' cft']]);
+    y = paragraph(y, 'Quantities are estimated using standard IS code thumb rules for ' + ctL(d.ct) + ' construction (' + flL(d.floors) + '). Actual quantities remain subject to the structural engineer\u2019s final Bill of Quantities.', 8.3);
+  }
+
+  // ================= narrative sections =================
+  const narrativeOrder = [
+    { tp: 'soil', title: 'Soil & Foundation Analysis' },
+    { tp: 'disaster', title: 'Disaster Risk Assessment' },
+    { tp: 'orient', title: 'Orientation & Climate Analysis' },
+    { tp: 'water', title: 'Waterproofing Assessment' },
+    { tp: 'waste', title: 'Material Optimization' }
+  ];
+  narrativeOrder.forEach(n => {
+    const sec = getSec(n.tp);
+    if (!sec) return;
+    currentTitle = n.title;
+    y = ensureSpace(y, 60);
+    const startY = y;
+    const startPage = pageNum;
+    y = sectionHeading(y, n.title);
+    riskBadge(startY, sec.r);
+    const plain = (sec.sum || '').replace(/<[^>]+>/g, '');
+    y = paragraph(y, plain, 9);
+    y = bulletList(y, sec.pts || []);
+    if (pageNum === startPage) sectionLeftBar(startY - 14, y - 8);
+  });
+
+  // ================= FINAL RECOMMENDATIONS =================
+  const overallSec = getSec('overall');
+  if (overallSec){
+    currentTitle = 'Final Recommendations';
+    y = ensureSpace(y, 60);
+    y = sectionHeading(y, 'Final Recommendations');
+    const plain = (overallSec.sum || '').replace(/<[^>]+>/g, '');
+    y = paragraph(y, plain, 9);
+    y = calloutBox(y, 'Recommended Next Steps', overallSec.pts || [], GOLD);
+  }
+
+  // ================= DISCLAIMER =================
+  currentTitle = 'Disclaimer';
+  y = ensureSpace(y, 200);
+  y = sectionHeading(y, 'Disclaimer');
+  y = paragraph(y, 'This report is an advisory reference summary compiled from published Bureau of Indian Standards (BIS) reference tables, publicly available disaster-risk classifications, and information provided by the applicant. It is intended for general informational and planning purposes only.', 9);
+  y = paragraph(y, 'This document is not a government-issued certificate and is not endorsed by any government authority. It does not replace a licensed soil investigation, a structural engineer\u2019s assessment, or any statutory approval required under applicable law. PlotPassport and its preparer accept no liability for decisions made, or losses incurred, on the basis of this report.', 9);
+  y = paragraph(y, 'We strongly recommend engaging a licensed civil or structural engineer, along with a certified soil testing agency, before finalising any construction investment or structural design.', 9);
+
+  // ================= CONTACT INFORMATION =================
+  currentTitle = 'Contact Information';
+  y = ensureSpace(y, 160);
+  y = sectionHeading(y, 'Contact Information');
+  y = infoTable(y, [
+    ['Prepared By', 'Santhosh TM'],
+    ['Company', 'PlotPassport'],
+    ['Email', 'santhoshtm1923@gmail.com'],
+    ['Phone / WhatsApp', '+91 9789 798 101']
+  ]);
+  y = paragraph(y, 'For questions regarding this report, a paid professional consultation, or to discuss the findings in more detail, please reach out using the contact details above. We are happy to help interpret these results alongside your architect or structural engineer.', 8.7);
+
+  return doc;
+}
+
+// Uploads the generated PDF to our backend and attaches it to the saved lead
+function uploadPdfToBackend(leadId, pdfBase64){
+  if (!leadId) return;
+  fetch('/api/leads/' + leadId + '/pdf', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ pdfBase64 })
+  }).catch(err => console.error('Could not upload PDF:', err));
+}
+
+function generate(){
+  const btn=document.getElementById("genBtn");btn.disabled=true;
+  const name=document.getElementById("vn").value.trim(),state=document.getElementById("vs").value,dist=document.getElementById("vd").value.trim(),area=parseInt(document.getElementById("va").value)||1000,floors=document.getElementById("vf").value,soil=document.getElementById("vso").value||"idk",sbc=document.getElementById("vsbc").value,wt=document.getElementById("vwt").value,topo=document.getElementById("vtopo").value,ct=selCT||"res",face=document.getElementById("vface").value,wb=document.getElementById("vwb").value,waNum=document.getElementById("vwa").value.trim();
+  document.getElementById("fs3").classList.remove("active");document.getElementById("ldEl").classList.add("act");
+  const dz=getDZ(dist,state),mat=cMat(area,floors,ct),score=cScore(dz,soil,wt,topo,wb),sd=SOILD[soil]||SOILD.idk,fd=FACED[face]||FACED.NA,wtN=parseInt(wt)||99,sbcN=parseInt(sbc)||sd.sbc;
+  window._rd={name,state,dist,area,floors,ct,score,dz,mat,sd,fd,sbc,wt:wtN,topo,wb,waNum,sbcN};
+  sendLeadToBackend(window._rd).then(res => { window._leadId = res && res.lead ? res.lead.id : null; });
+  animLoad().then(()=>setTimeout(()=>{document.getElementById("ldEl").classList.remove("act");buildRpt();},500));
+}
+function ctL(c){return{res:"Residential",com:"Commercial",ind:"Industrial",mix:"Mixed Use"}[c]||"Residential";}
+function flL(f){return{G:"Ground Floor",G1:"G+1",G2:"G+2",G3:"G+3+"}[f]||f;}
+function icon(t){
+  const ic={soil:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>',disaster:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/></svg>',orient:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg>',water:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>',waste:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>',overall:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',mat:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--g3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>'};
+  return ic[t]||ic.overall;
+}
+function buildRpt(){
+  const d=window._rd;
+  const rId="PP-"+Math.random().toString(36).substr(2,7).toUpperCase().replace(/[^A-Z0-9]/g,"X");
+  const now=new Date(),dateStr=now.toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
+  document.getElementById("rId").textContent=rId;document.getElementById("rDate").textContent=dateStr;document.getElementById("footDate").textContent=dateStr;
+  document.getElementById("mName").textContent=d.name;document.getElementById("mLoc").textContent=d.dist+", "+d.state;
+  document.getElementById("mArea").textContent=d.area.toLocaleString("en-IN")+" sq ft";document.getElementById("mType").textContent=ctL(d.ct);
+  document.getElementById("sNum").textContent=d.score;
+  const ring=document.getElementById("sRing");let rc,rl,rd;
+  if(d.score>=70){rc="grs";rl="Good Plot ✓";rd="Favourable construction conditions were confirmed. Standard IS code precautions were recommended.";}
+  else if(d.score>=50){rc="grw";rl="Proceed with Caution";rd="Risk factors were identified — all recommendations in this report were flagged as mandatory.";}
+  else{rc="grd";rl="High Risk Plot";rd="Multiple critical risk factors were detected — a licensed structural engineer review was strongly recommended.";}
+  ring.className="gring "+rc;document.getElementById("sLbl").textContent=rl;document.getElementById("sDesc").textContent=rd;
+  const dz=d.dz,mat=d.mat,sd=d.sd,fd=d.fd,sbcN=d.sbcN,wtN=d.wt,wb=d.wb,topo=d.topo;
+  const seisH=dz.sf.includes("Very High")||dz.sf.includes("High"),floodH=dz.f==="High"||dz.f==="Very High";
+  const wtHi=wtN<5||wb==="river"||wb==="nala"||topo==="low",wtMd=wtN<15||wb==="pond"||wb==="sea";
+  const savEst=((mat.wc*400+mat.ws*60+mat.wb*8)).toLocaleString("en-IN");
+  const sects=[
+    {tp:"mat",nm:"Estimated Material Requirements — "+flL(d.floors),r:"safe",isMat:true,matSummary:{cement:mat.cement,steel:mat.steel.toLocaleString("en-IN"),brick:mat.brick.toLocaleString("en-IN"),sand:mat.sand,agg:mat.agg}},
+    {tp:"soil",ico:"soil",nm:"Soil & Foundation Analysis",r:sd.r,sum:"Your plot's <strong>"+sd.n+"</strong> was analysed. Recommended foundation: <strong>"+sd.f+"</strong> at <strong>"+sd.d+"</strong> per IS 1904."+(sbcN<75?" ⚠️ Low SBC detected — pile foundation was strongly recommended.":""),pts:["Foundation type identified: "+sd.f,"Minimum construction depth specified: "+sd.d+" below ground level",sd.w,"Plate Load Test (IS 1888) or SPT was specified before structural drawings were finalised","Safe Bearing Capacity assessed: ~"+sbcN+" kN/m²"+(d.sbc?" (provided by applicant)":"(assumed for "+sd.n+")")]},
+    {tp:"disaster",ico:"disaster",nm:"Disaster Zone Risk Report",r:seisH&&floodH?"high":seisH||floodH?"warn":"safe",sum:"<strong>"+d.dist+", "+d.state+"</strong> was classified under Seismic Zone <strong>"+dz.s+"</strong> ("+dz.sf+" risk), Flood: <strong>"+dz.f+"</strong>, Cyclone: <strong>"+dz.c+"</strong>.",pts:[dz.s.includes("V")?"Zone V: Special Moment Resisting Frame (SMRF) was mandated under IS 1893 + IS 13920":dz.s.includes("IV")?"Zone IV: RCC frame with full ductile detailing was made mandatory per IS 13920":"Zone II/III: Standard RCC frame with seismic bands was specified per IS 1893",floodH?"Flood action: Plinth height was set to 600–900mm above road level. Waterproof plinth beam and non-return valves were specified.":"Plinth height: Standard 300–450mm above road level was confirmed adequate for current flood classification",dz.c!=="None"&&dz.c!=="Low"?"Cyclone: RCC slab roof was specified (AC sheets prohibited). Cyclone clips per IS 875 Part 3 were mandated.":"Cyclone: Low risk confirmed — standard construction norms were applied","Material specification: Fe 500D TMT bars and M20 grade concrete minimum were mandatory across all structural members","Reference standards: IS 1893, IS 13920, IS 875 Part 3, IS 4326 were applied"]},
+    {tp:"orient",ico:"orient",nm:"Orientation & Climate Analysis",r:fd.r,sum:"<strong>"+fd.n+"-Facing Plot:</strong> "+fd.s,pts:fd.p},
+    {tp:"water",ico:"water",nm:"Waterproofing Risk Assessment",r:wtHi?"high":wtMd?"warn":"safe",sum:wtHi?"<strong>⚠️ High waterproofing risk was detected.</strong> Shallow water table or proximity to a water body was identified. Comprehensive IS 3370 compliant waterproofing was mandated.":wtMd?"<strong>Moderate waterproofing risk was identified.</strong> Standard IS 3370 measures were specified at foundation, plinth, and terrace levels.":"<strong>Low waterproofing risk was confirmed.</strong> Standard DPC at plinth level was determined to be adequate as per IS 3414.",pts:wtHi?["Crystalline waterproofing additive (Xypex, Kryton) was specified for all foundation concrete","Bituminous membrane (minimum 2mm) was mandated on all below-ground walls","PVC waterstop strips were required at all construction joints in basement and plinth","Perimeter French drain was specified to divert sub-surface water","Basement construction was advised against — high uplift failure risk identified per IS 3370","Sump pump system was specified as mandatory if basement was unavoidable"]:wtMd?["DPC at plinth level was specified: 75mm M25 concrete + bitumen felt per IS 3414","Cement crystalline coating was mandated on external foundation walls (Dr. Fixit Krystalline or SikaTop)","Terrace waterproofing with PVC membrane at 1:50 slope was specified — ponding was prohibited","Two-coat waterproof plaster on bathroom and kitchen walls up to 1.8m height was required","All plumbing entry and exit points were to be sealed with non-shrink grout"]:["Standard DPC at plinth level per IS 3414 was specified","Minimum 1:100 terrace slope toward drain outlets was required to prevent ponding","Two-coat waterproof plaster in all wet areas was recommended","All plumbing and cable entry points were to be sealed with non-shrink grout","Annual roof slab joint inspection and sealing was recommended as preventive maintenance"]},
+    {tp:"waste",ico:"waste",nm:"Material & Waste Optimisation",r:"safe",sum:"An estimated <strong>₹"+savEst+"</strong> in savings was identified through optimised ordering and eco-friendly material substitutions across all categories.",pts:["Cement: "+mat.cement+" bags specified — "+mat.wc+" bags waste estimated. Maximum 50-bag batches were recommended to prevent moisture damage during storage","Steel: "+mat.steel.toLocaleString("en-IN")+" kg specified — "+mat.ws+" kg waste estimated. Fe 500D grade (IS 1786) was mandated for superior seismic ductility","Bricks: "+mat.brick.toLocaleString("en-IN")+" nos estimated — "+mat.wb.toLocaleString("en-IN")+" breakage units factored. Fly-ash bricks (IS 12894) were recommended — 30% stronger, 20% cheaper than clay bricks","Leftover brick crush was recommended for plinth fill or pathway construction — eliminating brick waste entirely","River sand procurement was advised directly from suppliers in tractor loads — 30–40% cost reduction over retail pricing was projected"]},
+    {tp:"overall",ico:"overall",nm:"Overall Recommendation",r:d.score>=70?"safe":d.score>=50?"warn":"high",sum:d.score>=70?"Your plot was assigned a <strong>"+d.score+"/100</strong> Plot Health Score — classified as a <strong>Good Plot ✓</strong>. Construction was confirmed as viable with standard IS code precautions.":d.score>=50?"Your plot was assigned a <strong>"+d.score+"/100</strong> Plot Health Score — <strong>Proceed with Caution</strong>. All recommendations were flagged as mandatory before construction commenced.":"Your plot was assigned a <strong>"+d.score+"/100</strong> Plot Health Score — classified as <strong>High Risk</strong>. A licensed structural engineer review was determined to be mandatory before any construction investment.",pts:["Certified soil investigation (IS 1892) was specified as mandatory before structural drawings were finalised","A licensed structural engineer — not a contractor — was required for all structural design and drawings","All statutory approvals were to be obtained before construction: Building Plan Sanction, Drainage NOC, local authority clearance",d.score>=70?"Construction was confirmed as viable after addressing the specific precautions listed in this report":"Further construction investment was advised against without a professional site assessment from a licensed civil engineer","Construction insurance was recommended for Seismic Zone III and above, or flood-classified districts","Professional consultation from ₹999 — contact: santhoshtm1923@gmail.com | +91 9789 798 101"]}
+  ];
+  const cont=document.getElementById("rCards");cont.innerHTML="";
+  sects.forEach(sec=>{
+    const card=document.createElement("div");card.className="rcard";
+    const rbcl=sec.r==="safe"?"rbs":sec.r==="high"?"rbd":"rbw",rbtx=sec.r==="safe"?"LOW RISK":sec.r==="high"?"HIGH RISK":"MODERATE";
+    if(sec.isMat){
+      card.innerHTML=`<div class="rchead">${icon("mat")}<span class="rctitle">${sec.nm}</span><span class="rbadge rbs">ESTIMATE</span></div><div class="rcbody"><div class="matgrid"><div class="matbox"><div class="matv">${mat.cement}</div><div class="matl">Cement (bags)</div><div class="matw">${mat.wc} waste</div></div><div class="matbox"><div class="matv">${mat.steel.toLocaleString("en-IN")}</div><div class="matl">Steel (kg)</div><div class="matw">${mat.ws} waste</div></div><div class="matbox"><div class="matv">${mat.brick.toLocaleString("en-IN")}</div><div class="matl">Bricks (nos)</div><div class="matw">${mat.wb.toLocaleString("en-IN")} waste</div></div><div class="matbox"><div class="matv">${mat.sand}</div><div class="matl">Sand (cft)</div><div class="matw">approx</div></div><div class="matbox"><div class="matv">${mat.agg}</div><div class="matl">Aggregate (cft)</div><div class="matw">approx</div></div></div><p style="margin-top:10px;font-size:12px;color:var(--g3)">All quantities were estimated using IS code thumb rules for ${ctL(d.ct)} construction (${flL(d.floors)}). Actual quantities were subject to the structural engineer's final Bill of Quantities (BOQ).</p></div>`;
+    } else {
+      card.innerHTML=`<div class="rchead">${icon(sec.ico)}<span class="rctitle">${sec.nm}</span><span class="rbadge ${rbcl}">${rbtx}</span></div><div class="rcbody"><p>${sec.sum}</p><ul>${sec.pts.map(p=>`<li>${p}</li>`).join("")}</ul></div>`;
+    }
+    cont.appendChild(card);
+  });
+  document.getElementById("CRPT").classList.add("act");
+  document.getElementById("CRPT").scrollIntoView({behavior:"smooth"});
+
+  // Generate a real PDF and save a copy to the backend so it appears in /admin.html
+  window._rd.rId = rId; window._rd.dateStr = dateStr;
+  try {
+    const pdfDoc = generateReportPDF(d, sects, rId, dateStr);
+    window._pdfDoc = pdfDoc;
+    const pdfBase64 = pdfDoc.output('datauristring').split(',')[1];
+    // Wait briefly for the lead ID to come back from sendLeadToBackend, then attach the PDF to it
+    const tryUpload = (attemptsLeft) => {
+      if (window._leadId) { uploadPdfToBackend(window._leadId, pdfBase64); }
+      else if (attemptsLeft > 0) { setTimeout(() => tryUpload(attemptsLeft - 1), 400); }
+    };
+    tryUpload(8);
+    const dlBtn = document.getElementById("dlPdfBtn");
+    if (dlBtn) dlBtn.style.display = "inline-flex";
+  } catch (e) { console.error('PDF generation failed:', e); }
+}
+function downloadReportPDF(){
+  if (window._pdfDoc) { window._pdfDoc.save('PlotPassport-' + (window._rd.rId || 'report') + '.pdf'); }
+  else { alert('PDF is still being prepared, please try again in a moment.'); }
+}
+function openWA(svc){const m=encodeURIComponent("Hello! I am interested in: *"+svc+"*.\nPlease share more details.");window.open("https://wa.me/"+MWA+"?text="+m,"_blank");}
+function shareWA(){const d=window._rd||{};const m=encodeURIComponent("📋 *My Plot Passport Report*\nReport ID: *"+(d.rId||"—")+"*\nPlot: "+(d.dist||"—")+", "+(d.state||"—")+"\nArea: "+(d.area||"—")+" sq ft\nPlot Health Score: *"+(d.score||"—")+"/100*\n\nGet yours free at PlotPassport\nContact: +91 9789 798 101");const num=(document.getElementById("vwa").value||"").trim();if(num)window.open("https://wa.me/91"+num+"?text="+m,"_blank");else window.open("https://wa.me/?text="+m,"_blank");}
+function resetAll(){document.getElementById("CRPT").classList.remove("act");document.getElementById("ldEl").classList.remove("act");for(let i=1;i<=6;i++){const el=document.getElementById("l"+i);if(el){el.className="ldstep";}}document.getElementById("genBtn").disabled=false;selCT="";document.querySelectorAll("input:not([type=radio]),select,textarea").forEach(el=>{if(!["vf","vface","vwb","vbg","vtopo"].includes(el.id))el.value="";});document.querySelectorAll(".ctype").forEach(c=>c.classList.remove("sel"));goSt(1);gto("fsec");}
+
+// Sends the contact form message to our own backend (server.js -> /api/contact) so it shows up in /admin.html, then opens WhatsApp
+function sendContact(){
+  const n=document.getElementById("cf1").value.trim(),e=document.getElementById("cf2").value.trim(),s=document.getElementById("cf3").value.trim(),m=document.getElementById("cf4").value.trim();
+  if(!n||!m){alert("Please fill in your name and message.");return;}
+  fetch('/api/contact', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: n, email: e, message: (s ? "["+s+"] " : "") + m })
+  }).catch(err => console.error('Could not save message:', err));
+  const msg=encodeURIComponent("*New PlotPassport Enquiry*\n\nName: "+n+"\nEmail: "+(e||"Not provided")+"\nSubject: "+(s||"General Enquiry")+"\n\nMessage:\n"+m);
+  window.open("https://wa.me/"+MWA+"?text="+msg,"_blank");
+}
+
+function downloadGovtCert(){
+  const w=window.open("","_blank");
+  const rId="RDS-"+Math.random().toString(36).substr(2,8).toUpperCase();
+  const dt=new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
+  w.document.write(`<!DOCTYPE html><html><head><title>PlotPassport Reference Data Summary</title><style>body{font-family:Georgia,serif;max-width:820px;margin:40px auto;padding:40px;border:1px solid #ccc;color:#0C1A32;background:#FFFDF8}h1{text-align:center;font-size:22px;border-bottom:2px solid #0C1A32;padding-bottom:14px;margin-bottom:20px}h2{font-size:15px;color:#162B55;margin:22px 0 10px;border-left:4px solid #F0A500;padding-left:10px}.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #ccc}.cid{font-size:11px;color:#666;font-family:monospace;text-align:right}table{width:100%;border-collapse:collapse;margin-bottom:18px}th{background:#0C1A32;color:white;padding:9px 12px;text-align:left;font-size:12px}td{padding:8px 12px;border-bottom:1px solid #ddd;font-size:12px}.foot{margin-top:36px;padding-top:16px;border-top:2px solid #0C1A32;font-size:10px;color:#666;text-align:center}.disclaimer{text-align:center;margin:18px 0;font-size:11px;color:#888;font-family:monospace}@media print{body{margin:0;border:none}}</style></head><body><div class="hdr"><div><strong style="font-size:18px;font-family:Georgia">PlotPassport</strong><br><span style="font-size:11px;color:#666">Pre-Construction Intelligence System · India</span></div><div class="cid">Reference ID: ${rId}<br>Generated: ${dt}<br>For informational purposes only</div></div><h1>Reference Data Summary</h1><div class="disclaimer">· · · NOT A GOVERNMENT-ISSUED DOCUMENT · · ·</div><p style="font-size:13px;margin-bottom:18px">This summary lists the published Bureau of Indian Standards (BIS) and public agency reference tables that PlotPassport's calculator uses. It is compiled for general guidance only and is not an official government certificate, and not a substitute for a licensed soil investigation or structural engineer's report.</p><h2>BIS Seismic Zone Classification — IS 1893 : 2016</h2><table><tr><th>Zone</th><th>Risk Level</th><th>IS Code Reference</th><th>Structural Requirement</th><th>Example Cities</th></tr><tr><td>Zone II</td><td>Low</td><td>IS 1893 Part 1</td><td>Standard RCC with seismic bands</td><td>Bengaluru, Hyderabad, Bhopal</td></tr><tr><td>Zone III</td><td>Moderate</td><td>IS 1893 + IS 13920</td><td>RCC frame with ductile detailing</td><td>Mumbai, Chennai, Kolkata</td></tr><tr><td>Zone IV</td><td>High</td><td>IS 1893 + IS 13920</td><td>Full ductile RCC frame mandatory</td><td>Delhi, Chandigarh, Patna</td></tr><tr><td>Zone V</td><td>Very High</td><td>IS 1893 + IS 13920</td><td>SMRF — Special design mandatory</td><td>Guwahati, Srinagar, Imphal</td></tr></table><h2>Flood Risk District Classification (public data, 2023)</h2><table><tr><th>Risk Level</th><th>States Affected</th><th>Plinth Requirement</th><th>Waterproofing Mandate</th></tr><tr><td>Low</td><td>Rajasthan, MP interior</td><td>300mm above road level</td><td>Standard DPC as per IS 3414</td></tr><tr><td>Moderate</td><td>UP, Karnataka, Maharashtra</td><td>450mm above road level</td><td>Enhanced DPC + membrane</td></tr><tr><td>High</td><td>Bihar, Kerala, West Bengal</td><td>600–900mm above road</td><td>Full IS 3370 waterproofing system</td></tr><tr><td>Very High</td><td>Assam, coastal Odisha, Bihar plains</td><td>900mm+ with flood barrier</td><td>Comprehensive flood-resistant design</td></tr></table><h2>Soil Classification & Foundation Standards — IS 1498 : 1970, IS 1888 : 1982, IS 1904 : 1986</h2><table><tr><th>Soil Type</th><th>IS Classification</th><th>SBC Range</th><th>Recommended Foundation</th><th>IS Standard</th></tr><tr><td>Rock / Hard Murrum</td><td>IS 1498</td><td>250–350 kN/m²</td><td>Shallow isolated column footing</td><td>IS 1904</td></tr><tr><td>Loamy / Mixed Soil</td><td>IS 1498</td><td>150–200 kN/m²</td><td>Strip or isolated column footing</td><td>IS 1904</td></tr><tr><td>Alluvial / Clay</td><td>IS 1498</td><td>80–130 kN/m²</td><td>RCC raft / mat foundation</td><td>IS 1904</td></tr><tr><td>Sandy Loose Soil</td><td>IS 1498</td><td>80–120 kN/m²</td><td>Well-compacted RCC raft</td><td>IS 1904</td></tr><tr><td>Black Cotton Soil</td><td>IS 1498</td><td>50–80 kN/m²</td><td>Under-reamed pile foundation</td><td>IS 11446</td></tr></table><h2>Key IS Code References Applied</h2><table><tr><th>IS Code</th><th>Title</th><th>Application</th></tr><tr><td>IS 1893 : 2016</td><td>Criteria for Earthquake Resistant Design</td><td>Seismic zone classification</td></tr><tr><td>IS 13920 : 2016</td><td>Ductile Design of RC Structures</td><td>Seismic detailing requirements</td></tr><tr><td>IS 1904 : 1986</td><td>Design and Construction of Foundations</td><td>Foundation type recommendation</td></tr><tr><td>IS 3370 : 2009</td><td>Code for Concrete Structures for Liquid Retention</td><td>Waterproofing specifications</td></tr><tr><td>IS 875 Part 3</td><td>Design Loads for Buildings — Wind Loads</td><td>Cyclone and wind resistance</td></tr><tr><td>IS 11446 : 1985</td><td>Under-reamed Pile Foundation</td><td>Black cotton soil foundation</td></tr><tr><td>IS 12894 : 2002</td><td>Fly Ash Bricks Specification</td><td>Eco-friendly material recommendation</td></tr></table><div class="foot"><p>This Reference Data Summary was generated by PlotPassport<br>Contact: santhoshtm1923@gmail.com | +91 9789 798 101<br>Data Sources: Published Bureau of Indian Standards (BIS) tables and public agency reference data<br><strong>This is an advisory reference summary, not a government-issued document, and not a substitute for licensed soil investigation or structural engineering certification.</strong></p></div></body></html>`);
+  w.document.close();setTimeout(()=>w.print(),600);
+}
+// Scroll reveal
+const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("vis");});},{threshold:.1,rootMargin:"0px 0px -40px 0px"});
+document.querySelectorAll(".reveal,.revL,.revR").forEach(el=>ro.observe(el));
+// Counter
+const co=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting&&e.target.dataset.c){const tg=parseInt(e.target.dataset.c),dur=1400,st=Date.now();const ti=setInterval(()=>{const prog=Math.min((Date.now()-st)/dur,1),cur=Math.round(prog*tg);e.target.textContent=cur+(tg===700?"+":"");if(prog===1)clearInterval(ti);},16);}});},{threshold:.5});
+document.querySelectorAll("[data-c]").forEach(el=>co.observe(el));
+// Ripple
+document.querySelectorAll(".bprim,.bnxt,.bgen").forEach(btn=>{btn.addEventListener("click",function(e){const r=document.createElement("span"),rect=this.getBoundingClientRect(),sz=Math.max(rect.width,rect.height)*2;r.className="rip";r.style.cssText="width:"+sz+"px;height:"+sz+"px;left:"+(e.clientX-rect.left-sz/2)+"px;top:"+(e.clientY-rect.top-sz/2)+"px";this.appendChild(r);setTimeout(()=>r.remove(),600);});});
+</script>
+</body>
+</html>
